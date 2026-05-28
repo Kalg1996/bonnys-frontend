@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardDashboard from "@/components/CardDashboard";
+import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
 
 const tarjetas = [
@@ -78,37 +80,33 @@ export default function DashboardPage() {
 
   return (
     <main className="min-vh-100 bg-light">
-      <section className="container py-4 py-md-5">
-        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
-          <div>
-            <span className="badge text-bg-primary mb-2">Bonnys</span>
+      <Navbar usuario={usuario} onCerrarSesion={handleCerrarSesion} />
+
+      <div className="dashboard-shell">
+        <Sidebar />
+
+        <section className="dashboard-content p-3 p-md-4 p-xl-5">
+          <div className="mb-4">
+            <span className="badge text-bg-primary mb-2">Dashboard</span>
             <h1 className="h2 fw-bold mb-1">Hola, {nombre}</h1>
             <p className="text-secondary mb-0">
               Selecciona un módulo para administrar el salón.
             </p>
           </div>
 
-          <button
-            type="button"
-            className="btn btn-outline-danger"
-            onClick={handleCerrarSesion}
-          >
-            Cerrar sesión
-          </button>
-        </div>
-
-        <div className="row g-4">
-          {tarjetas.map((tarjeta) => (
-            <div className="col-12 col-md-6 col-xl-4" key={tarjeta.ruta}>
-              <CardDashboard
-                titulo={tarjeta.titulo}
-                descripcion={tarjeta.descripcion}
-                ruta={tarjeta.ruta}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+          <div className="row g-4">
+            {tarjetas.map((tarjeta) => (
+              <div className="col-12 col-md-6 col-xl-4" key={tarjeta.ruta}>
+                <CardDashboard
+                  titulo={tarjeta.titulo}
+                  descripcion={tarjeta.descripcion}
+                  ruta={tarjeta.ruta}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
