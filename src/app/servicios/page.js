@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import { buildAssetUrl } from "@/services/api";
 import {
   actualizarServicio,
   crearServicio,
   eliminarServicio,
   obtenerServicios,
 } from "@/services/servicioService";
+import {
+  subirImagenServicio,
+  subirVideoServicio,
+} from "@/services/uploadService";
 import {
   cerrarSesion,
   obtenerToken,
@@ -47,6 +52,7 @@ export default function ServiciosPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoServicios, setCargandoServicios] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [subiendoArchivo, setSubiendoArchivo] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -93,6 +99,52 @@ export default function ServiciosPage() {
       ...prevFormulario,
       [name]: value,
     }));
+  }
+
+  async function handleSubirImagen(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSubiendoArchivo("imagen");
+    setMensaje("");
+    setError("");
+
+    try {
+      const respuesta = await subirImagenServicio(file);
+      setFormulario((prevFormulario) => ({
+        ...prevFormulario,
+        url_foto: respuesta?.data?.url || "",
+      }));
+      setMensaje("Imagen de servicio subida correctamente.");
+    } catch (err) {
+      setError(err.message || "No se pudo subir la imagen.");
+    } finally {
+      setSubiendoArchivo("");
+      event.target.value = "";
+    }
+  }
+
+  async function handleSubirVideo(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSubiendoArchivo("video");
+    setMensaje("");
+    setError("");
+
+    try {
+      const respuesta = await subirVideoServicio(file);
+      setFormulario((prevFormulario) => ({
+        ...prevFormulario,
+        url_video: respuesta?.data?.url || "",
+      }));
+      setMensaje("Video de servicio subido correctamente.");
+    } catch (err) {
+      setError(err.message || "No se pudo subir el video.");
+    } finally {
+      setSubiendoArchivo("");
+      event.target.value = "";
+    }
   }
 
   function limpiarFormulario() {
@@ -286,17 +338,59 @@ export default function ServiciosPage() {
                     </div>
 
                     <div className="mb-3">
+                      <label htmlFor="archivo_foto_servicio" className="form-label">
+                        Subir foto
+                      </label>
+                      <input
+                        id="archivo_foto_servicio"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        className="form-control"
+                        onChange={handleSubirImagen}
+                        disabled={subiendoArchivo === "imagen"}
+                      />
+                      {subiendoArchivo === "imagen" && (
+                        <small className="text-secondary">Subiendo imagen...</small>
+                      )}
+                    </div>
+
+                    {formulario.url_foto && (
+                      <img
+                        src={buildAssetUrl(formulario.url_foto)}
+                        alt="Vista previa del servicio"
+                        className="upload-preview mb-3"
+                      />
+                    )}
+
+                    <div className="mb-3">
                       <label htmlFor="url_foto" className="form-label">
                         URL de foto
                       </label>
                       <input
                         id="url_foto"
                         name="url_foto"
-                        type="url"
+                        type="text"
                         className="form-control"
                         value={formulario.url_foto}
                         onChange={handleChange}
                       />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="archivo_video_servicio" className="form-label">
+                        Subir video
+                      </label>
+                      <input
+                        id="archivo_video_servicio"
+                        type="file"
+                        accept=".mp4,.webm,.mov,video/mp4,video/webm,video/quicktime"
+                        className="form-control"
+                        onChange={handleSubirVideo}
+                        disabled={subiendoArchivo === "video"}
+                      />
+                      {subiendoArchivo === "video" && (
+                        <small className="text-secondary">Subiendo video...</small>
+                      )}
                     </div>
 
                     <div className="mb-4">
@@ -306,7 +400,7 @@ export default function ServiciosPage() {
                       <input
                         id="url_video"
                         name="url_video"
-                        type="url"
+                        type="text"
                         className="form-control"
                         value={formulario.url_video}
                         onChange={handleChange}
@@ -368,6 +462,7 @@ export default function ServiciosPage() {
                       <table className="table table-hover align-middle mb-0">
                         <thead className="table-light">
                           <tr>
+                            <th>Foto</th>
                             <th>Servicio</th>
                             <th>Precio</th>
                             <th>Duración</th>
@@ -378,13 +473,24 @@ export default function ServiciosPage() {
                         <tbody>
                           {servicios.length === 0 ? (
                             <tr>
-                              <td colSpan="5" className="text-center text-secondary py-4">
+                              <td colSpan="6" className="text-center text-secondary py-4">
                                 No hay servicios registrados.
                               </td>
                             </tr>
                           ) : (
                             servicios.map((servicio) => (
                               <tr key={servicio.id_servicio}>
+                                <td>
+                                  {servicio.url_foto ? (
+                                    <img
+                                      src={buildAssetUrl(servicio.url_foto)}
+                                      alt={servicio.nombre}
+                                      className="table-thumb"
+                                    />
+                                  ) : (
+                                    <span className="text-secondary small">Sin foto</span>
+                                  )}
+                                </td>
                                 <td>
                                   <div className="fw-semibold">
                                     {servicio.nombre}

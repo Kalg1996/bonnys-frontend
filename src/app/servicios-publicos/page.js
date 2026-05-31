@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { buildAssetUrl } from "@/services/api";
 import { obtenerServiciosPublicos } from "@/services/publicService";
 
 const formatoMoneda = new Intl.NumberFormat("es-GT", {
@@ -65,7 +66,9 @@ export default function ServiciosPublicosPage() {
                   {servicio.url_foto && (
                     <div
                       className="public-card-image"
-                      style={{ backgroundImage: `url(${servicio.url_foto})` }}
+                      style={{
+                        backgroundImage: `url(${buildAssetUrl(servicio.url_foto)})`,
+                      }}
                     />
                   )}
                   <div className="card-body d-flex flex-column p-4">

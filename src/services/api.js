@@ -1,4 +1,8 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  API_URL?.replace(/\/api\/?$/, "") ||
+  "http://localhost:3000";
 
 function buildUrl(path) {
   const normalizedBaseUrl = API_URL?.replace(/\/$/, "") ?? "";
@@ -30,6 +34,20 @@ export async function apiFetch(path, options = {}) {
   }
 
   return data;
+}
+
+export function buildAssetUrl(url) {
+  if (!url) return "";
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  if (url.startsWith("/uploads")) {
+    return `${API_BASE_URL.replace(/\/$/, "")}${url}`;
+  }
+
+  return url;
 }
 
 const api = {
