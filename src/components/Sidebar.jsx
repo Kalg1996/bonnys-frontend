@@ -9,8 +9,10 @@ const enlaces = [
   { texto: "Servicios", ruta: "/servicios" },
   { texto: "Productos", ruta: "/productos" },
   { texto: "Citas", ruta: "/citas" },
+  { texto: "Calendario de citas", ruta: "/calendario-citas" },
   { texto: "Ingresos", ruta: "/ingresos" },
   { texto: "Gastos", ruta: "/gastos" },
+  { texto: "Horarios del salón", ruta: "/horarios-salon" },
 ];
 
 export default function Sidebar() {
