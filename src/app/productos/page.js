@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import MediaCarousel from "@/components/MediaCarousel";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -63,11 +64,13 @@ export default function ProductosPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoProductos, setCargandoProductos] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [subiendoArchivo, setSubiendoArchivo] = useState("");
   const [productoGaleria, setProductoGaleria] = useState(null);
   const [galeria, setGaleria] = useState([]);
   const [cargandoGaleria, setCargandoGaleria] = useState(false);
   const [subiendoGaleria, setSubiendoGaleria] = useState("");
+  const [eliminandoMediaId, setEliminandoMediaId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -229,6 +232,13 @@ export default function ProductosPage() {
   }
 
   async function handleEliminarMediaGaleria(idMedia) {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
+
+    if (!confirmar) return;
+
+    setEliminandoMediaId(idMedia);
     setMensaje("");
     setError("");
 
@@ -238,6 +248,8 @@ export default function ProductosPage() {
       await abrirGaleria(productoGaleria);
     } catch (err) {
       setError(err.message || "No se pudo eliminar el elemento.");
+    } finally {
+      setEliminandoMediaId(null);
     }
   }
 
@@ -289,10 +301,13 @@ export default function ProductosPage() {
   }
 
   async function handleEliminar(producto) {
-    const confirmar = window.confirm(`¿Eliminar el producto ${producto.nombre}?`);
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
 
     if (!confirmar) return;
 
+    setEliminandoId(producto.id_producto);
     setMensaje("");
     setError("");
 
@@ -302,6 +317,8 @@ export default function ProductosPage() {
       await cargarProductos();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el producto.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -331,17 +348,8 @@ export default function ProductosPage() {
             </p>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -664,8 +672,11 @@ export default function ProductosPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(producto)}
+                                      disabled={eliminandoId === producto.id_producto}
                                     >
-                                      Eliminar
+                                      {eliminandoId === producto.id_producto
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>
@@ -717,6 +728,9 @@ export default function ProductosPage() {
                           onChange={handleSubirImagenGaleria}
                           disabled={subiendoGaleria === "imagen"}
                         />
+                        {subiendoGaleria === "imagen" && (
+                          <small className="text-secondary">Subiendo imagen...</small>
+                        )}
                       </div>
                       <div className="col-12 col-md-6">
                         <label className="form-label" htmlFor="galeria_producto_video">
@@ -730,6 +744,9 @@ export default function ProductosPage() {
                           onChange={handleSubirVideoGaleria}
                           disabled={subiendoGaleria === "video"}
                         />
+                        {subiendoGaleria === "video" && (
+                          <small className="text-secondary">Subiendo video...</small>
+                        )}
                       </div>
                     </div>
 
@@ -758,8 +775,11 @@ export default function ProductosPage() {
                                   type="button"
                                   className="btn btn-outline-danger btn-sm"
                                   onClick={() => handleEliminarMediaGaleria(media.id_media)}
+                                  disabled={eliminandoMediaId === media.id_media}
                                 >
-                                  Eliminar
+                                  {eliminandoMediaId === media.id_media
+                                    ? "Eliminando..."
+                                    : "Eliminar"}
                                 </button>
                               </div>
                             </div>

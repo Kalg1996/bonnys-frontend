@@ -163,6 +163,15 @@ a {
   border-radius: 0.9rem;
 }
 
+.alert-message-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: 0 0 0.75rem;
+  margin-top: 0.35rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
 .alert-success {
   color: #14532d;
   border-color: #bbf7d0;
@@ -589,5 +598,11 @@ a {
 
   .public-page-header {
     padding: 1.25rem;
+  }
+
+  .btn,
+  .btn-lg,
+  .btn-sm {
+    white-space: normal;
   }
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import AlertMessage from "@/components/AlertMessage";
 import {
   agendarCitaPublica,
   obtenerServiciosPublicos,
@@ -92,17 +93,8 @@ export default function AgendarCitaPage() {
               </Link>
             </div>
 
-            {mensaje && (
-              <div className="alert alert-success" role="alert">
-                {mensaje}
-              </div>
-            )}
-
-            {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
+            <AlertMessage type="success" message={mensaje} />
+            <AlertMessage type="danger" message={error} />
 
             <div className="card border-0 shadow-sm">
               <div className="card-body p-4 p-md-5">

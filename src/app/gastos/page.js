@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import {
@@ -67,6 +68,7 @@ export default function GastosPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoDatos, setCargandoDatos] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -167,10 +169,13 @@ export default function GastosPage() {
   }
 
   async function handleEliminar(gasto) {
-    const confirmar = window.confirm(`¿Eliminar el gasto "${gasto.concepto}"?`);
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
 
     if (!confirmar) return;
 
+    setEliminandoId(gasto.id_gasto);
     setMensaje("");
     setError("");
 
@@ -180,6 +185,8 @@ export default function GastosPage() {
       await cargarDatos();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el gasto.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -209,17 +216,8 @@ export default function GastosPage() {
             </p>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -453,8 +451,11 @@ export default function GastosPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(gasto)}
+                                      disabled={eliminandoId === gasto.id_gasto}
                                     >
-                                      Eliminar
+                                      {eliminandoId === gasto.id_gasto
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>

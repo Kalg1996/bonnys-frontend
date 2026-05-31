@@ -25,6 +25,7 @@ export default function MediaCarousel({
   if (hasImage && !hasVideo) {
     return isDetail ? (
       <div className="detail-media-frame">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={resolvedImageUrl}
           alt={imageAlt}
@@ -85,6 +86,7 @@ export default function MediaCarousel({
         <div className="carousel-item active">
           {isDetail ? (
             <div className="detail-media-frame">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={resolvedImageUrl}
                 alt={imageAlt}

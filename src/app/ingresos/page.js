@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { obtenerClientes } from "@/services/clienteService";
@@ -75,6 +76,7 @@ export default function IngresosPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoDatos, setCargandoDatos] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -179,11 +181,12 @@ export default function IngresosPage() {
 
   async function handleEliminar(ingreso) {
     const confirmar = window.confirm(
-      `¿Eliminar el ingreso "${ingreso.concepto}"?`
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
     );
 
     if (!confirmar) return;
 
+    setEliminandoId(ingreso.id_ingreso);
     setMensaje("");
     setError("");
 
@@ -193,6 +196,8 @@ export default function IngresosPage() {
       await cargarDatos();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el ingreso.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -222,17 +227,8 @@ export default function IngresosPage() {
             </p>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -491,8 +487,11 @@ export default function IngresosPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(ingreso)}
+                                      disabled={eliminandoId === ingreso.id_ingreso}
                                     >
-                                      Eliminar
+                                      {eliminandoId === ingreso.id_ingreso
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>

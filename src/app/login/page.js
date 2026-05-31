@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import { login } from "@/services/authService";
 import { guardarToken, guardarUsuario } from "@/utils/auth";
 
@@ -68,11 +69,7 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {error && (
-                  <div className="alert alert-danger" role="alert">
-                    {error}
-                  </div>
-                )}
+                <AlertMessage type="danger" message={error} />
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -112,7 +109,7 @@ export default function LoginPage() {
                     className="btn btn-primary btn-lg w-100"
                     disabled={cargando}
                   >
-                    {cargando ? "Iniciando sesión..." : "Iniciar sesión"}
+                    {cargando ? "Ingresando..." : "Iniciar sesión"}
                   </button>
                 </form>
               </div>

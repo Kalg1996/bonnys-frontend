@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { obtenerCitas } from "@/services/citaService";
@@ -205,11 +206,7 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="danger" message={error} />
 
           {cargandoDatos && (
             <div className="alert alert-light border d-flex align-items-center gap-2">

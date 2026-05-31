@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import {
@@ -77,6 +78,7 @@ export default function CitasPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoDatos, setCargandoDatos] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -183,10 +185,13 @@ export default function CitasPage() {
   }
 
   async function handleEliminar(cita) {
-    const confirmar = window.confirm(`¿Eliminar la cita #${cita.id_cita}?`);
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
 
     if (!confirmar) return;
 
+    setEliminandoId(cita.id_cita);
     setMensaje("");
     setError("");
 
@@ -196,6 +201,8 @@ export default function CitasPage() {
       await cargarDatos();
     } catch (err) {
       setError(err.message || "No se pudo eliminar la cita.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -225,17 +232,8 @@ export default function CitasPage() {
             </p>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -498,8 +496,11 @@ export default function CitasPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(cita)}
+                                      disabled={eliminandoId === cita.id_cita}
                                     >
-                                      Eliminar
+                                      {eliminandoId === cita.id_cita
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import {
@@ -34,6 +35,7 @@ export default function ClientesPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoClientes, setCargandoClientes] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -127,11 +129,12 @@ export default function ClientesPage() {
 
   async function handleEliminar(cliente) {
     const confirmar = window.confirm(
-      `¿Eliminar a ${cliente.nombre} ${cliente.apellido}?`
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
     );
 
     if (!confirmar) return;
 
+    setEliminandoId(cliente.id_cliente);
     setMensaje("");
     setError("");
 
@@ -141,6 +144,8 @@ export default function ClientesPage() {
       await cargarClientes();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el cliente.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -172,17 +177,8 @@ export default function ClientesPage() {
             </div>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -379,8 +375,11 @@ export default function ClientesPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(cliente)}
+                                      disabled={eliminandoId === cliente.id_cliente}
                                     >
-                                      Eliminar
+                                      {eliminandoId === cliente.id_cliente
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>

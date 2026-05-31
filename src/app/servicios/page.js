@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AlertMessage from "@/components/AlertMessage";
 import MediaCarousel from "@/components/MediaCarousel";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -57,11 +58,13 @@ export default function ServiciosPage() {
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoServicios, setCargandoServicios] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [eliminandoId, setEliminandoId] = useState(null);
   const [subiendoArchivo, setSubiendoArchivo] = useState("");
   const [servicioGaleria, setServicioGaleria] = useState(null);
   const [galeria, setGaleria] = useState([]);
   const [cargandoGaleria, setCargandoGaleria] = useState(false);
   const [subiendoGaleria, setSubiendoGaleria] = useState("");
+  const [eliminandoMediaId, setEliminandoMediaId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -223,6 +226,13 @@ export default function ServiciosPage() {
   }
 
   async function handleEliminarMediaGaleria(idMedia) {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
+
+    if (!confirmar) return;
+
+    setEliminandoMediaId(idMedia);
     setMensaje("");
     setError("");
 
@@ -232,6 +242,8 @@ export default function ServiciosPage() {
       await abrirGaleria(servicioGaleria);
     } catch (err) {
       setError(err.message || "No se pudo eliminar el elemento.");
+    } finally {
+      setEliminandoMediaId(null);
     }
   }
 
@@ -282,10 +294,13 @@ export default function ServiciosPage() {
   }
 
   async function handleEliminar(servicio) {
-    const confirmar = window.confirm(`¿Eliminar el servicio ${servicio.nombre}?`);
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer."
+    );
 
     if (!confirmar) return;
 
+    setEliminandoId(servicio.id_servicio);
     setMensaje("");
     setError("");
 
@@ -295,6 +310,8 @@ export default function ServiciosPage() {
       await cargarServicios();
     } catch (err) {
       setError(err.message || "No se pudo eliminar el servicio.");
+    } finally {
+      setEliminandoId(null);
     }
   }
 
@@ -324,17 +341,8 @@ export default function ServiciosPage() {
             </p>
           </div>
 
-          {mensaje && (
-            <div className="alert alert-success" role="alert">
-              {mensaje}
-            </div>
-          )}
-
-          {error && (
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
-          )}
+          <AlertMessage type="success" message={mensaje} />
+          <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
             <div className="col-12 col-xl-4">
@@ -631,8 +639,11 @@ export default function ServiciosPage() {
                                       type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(servicio)}
+                                      disabled={eliminandoId === servicio.id_servicio}
                                     >
-                                      Eliminar
+                                      {eliminandoId === servicio.id_servicio
+                                        ? "Eliminando..."
+                                        : "Eliminar"}
                                     </button>
                                   </div>
                                 </td>
@@ -684,6 +695,9 @@ export default function ServiciosPage() {
                           onChange={handleSubirImagenGaleria}
                           disabled={subiendoGaleria === "imagen"}
                         />
+                        {subiendoGaleria === "imagen" && (
+                          <small className="text-secondary">Subiendo imagen...</small>
+                        )}
                       </div>
                       <div className="col-12 col-md-6">
                         <label className="form-label" htmlFor="galeria_servicio_video">
@@ -697,6 +711,9 @@ export default function ServiciosPage() {
                           onChange={handleSubirVideoGaleria}
                           disabled={subiendoGaleria === "video"}
                         />
+                        {subiendoGaleria === "video" && (
+                          <small className="text-secondary">Subiendo video...</small>
+                        )}
                       </div>
                     </div>
 
@@ -725,8 +742,11 @@ export default function ServiciosPage() {
                                   type="button"
                                   className="btn btn-outline-danger btn-sm"
                                   onClick={() => handleEliminarMediaGaleria(media.id_media)}
+                                  disabled={eliminandoMediaId === media.id_media}
                                 >
-                                  Eliminar
+                                  {eliminandoMediaId === media.id_media
+                                    ? "Eliminando..."
+                                    : "Eliminar"}
                                 </button>
                               </div>
                             </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AlertMessage from "@/components/AlertMessage";
 import MediaCarousel from "@/components/MediaCarousel";
 import { obtenerGaleriaPublicaProducto } from "@/services/galeriaService";
 import { obtenerProductosPublicos } from "@/services/publicService";
@@ -61,7 +62,7 @@ export default function ProductoPublicoDetallePage() {
           </Link>
         </div>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        <AlertMessage type="danger" message={error} />
 
         {cargando ? (
           <div className="py-5 text-center">
@@ -70,7 +71,7 @@ export default function ProductoPublicoDetallePage() {
             </div>
           </div>
         ) : !producto ? (
-          <div className="alert alert-danger">Producto no encontrado.</div>
+          <AlertMessage type="danger" message="Producto no encontrado." />
         ) : (
           <>
             <div className="card border-0 shadow-sm public-card mb-4">

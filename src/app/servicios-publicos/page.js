@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import AlertMessage from "@/components/AlertMessage";
 import MediaCarousel from "@/components/MediaCarousel";
 import { obtenerServiciosPublicos } from "@/services/publicService";
 
@@ -46,11 +47,7 @@ export default function ServiciosPublicosPage() {
           </Link>
         </div>
 
-        {error && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
+        <AlertMessage type="danger" message={error} />
 
         {cargando ? (
           <div className="py-5 text-center">
