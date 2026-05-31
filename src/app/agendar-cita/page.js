@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import AlertMessage from "@/components/AlertMessage";
 import {
   agendarCitaPublica,
+  obtenerDisponibilidad,
   obtenerServiciosPublicos,
 } from "@/services/publicService";
 
@@ -25,7 +26,9 @@ const formularioInicial = {
 export default function AgendarCitaPage() {
   const [servicios, setServicios] = useState([]);
   const [formulario, setFormulario] = useState(formularioInicial);
+  const [horarios, setHorarios] = useState([]);
   const [cargandoServicios, setCargandoServicios] = useState(true);
+  const [cargandoHorarios, setCargandoHorarios] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
@@ -45,13 +48,57 @@ export default function AgendarCitaPage() {
     cargarServicios();
   }, []);
 
+  useEffect(() => {
+    async function cargarHorarios() {
+      if (!formulario.id_servicio || !formulario.fecha_cita) {
+        setHorarios([]);
+        return;
+      }
+
+      setCargandoHorarios(true);
+      setError("");
+      setHorarios([]);
+
+      try {
+        const respuesta = await obtenerDisponibilidad(
+          formulario.fecha_cita,
+          formulario.id_servicio
+        );
+        setHorarios(respuesta?.data?.horarios || []);
+      } catch (err) {
+        setError(err.message || "No se pudieron cargar los horarios.");
+      } finally {
+        setCargandoHorarios(false);
+      }
+    }
+
+    cargarHorarios();
+  }, [formulario.id_servicio, formulario.fecha_cita]);
+
   function handleChange(event) {
     const { name, value } = event.target;
 
+    setFormulario((prevFormulario) => {
+      const debeLimpiarHorario =
+        name === "id_servicio" || name === "fecha_cita";
+
+      return {
+        ...prevFormulario,
+        [name]: value,
+        ...(debeLimpiarHorario ? { hora_inicio: "", hora_fin: "" } : {}),
+      };
+    });
+  }
+
+  function seleccionarHorario(horario) {
+    if (!horario.disponible) return;
+
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      [name]: value,
+      hora_inicio: horario.hora_inicio,
+      hora_fin: horario.hora_fin,
     }));
+    setError("");
   }
 
   async function handleSubmit(event) {
@@ -61,6 +108,30 @@ export default function AgendarCitaPage() {
     setError("");
 
     try {
+      if (!formulario.id_servicio) {
+        throw new Error("Selecciona un servicio.");
+      }
+
+      if (!formulario.fecha_cita) {
+        throw new Error("Selecciona una fecha.");
+      }
+
+      if (!formulario.hora_inicio || !formulario.hora_fin) {
+        throw new Error("Selecciona un horario disponible.");
+      }
+
+      if (!formulario.nombre.trim()) {
+        throw new Error("Ingresa tu nombre.");
+      }
+
+      if (!formulario.apellido.trim()) {
+        throw new Error("Ingresa tu apellido.");
+      }
+
+      if (!formulario.telefono1.trim()) {
+        throw new Error("Ingresa tu teléfono principal.");
+      }
+
       await agendarCitaPublica({
         ...formulario,
         id_servicio: Number(formulario.id_servicio),
@@ -68,6 +139,7 @@ export default function AgendarCitaPage() {
 
       setMensaje("Tu cita fue solicitada correctamente. Quedó en estado PENDIENTE.");
       setFormulario(formularioInicial);
+      setHorarios([]);
     } catch (err) {
       setError(err.message || "No se pudo agendar la cita.");
     } finally {
@@ -141,6 +213,7 @@ export default function AgendarCitaPage() {
                         className="form-control"
                         value={formulario.telefono1}
                         onChange={handleChange}
+                        required
                       />
                     </div>
 
@@ -211,7 +284,7 @@ export default function AgendarCitaPage() {
                       </select>
                     </div>
 
-                    <div className="col-12 col-md-4">
+                    <div className="col-12 col-md-6">
                       <label htmlFor="fecha_cita" className="form-label">
                         Fecha
                       </label>
@@ -226,34 +299,65 @@ export default function AgendarCitaPage() {
                       />
                     </div>
 
-                    <div className="col-12 col-md-4">
-                      <label htmlFor="hora_inicio" className="form-label">
-                        Hora inicio
-                      </label>
-                      <input
-                        id="hora_inicio"
-                        name="hora_inicio"
-                        type="time"
-                        className="form-control"
-                        value={formulario.hora_inicio}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+                    <div className="col-12">
+                      <div className="border rounded-3 p-3 bg-light">
+                        <div className="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
+                          <div>
+                            <p className="fw-bold mb-1">Horarios disponibles</p>
+                            <p className="text-secondary small mb-0">
+                              Selecciona un servicio y una fecha para ver el calendario.
+                            </p>
+                          </div>
+                          {formulario.hora_inicio && formulario.hora_fin && (
+                            <span className="badge text-bg-primary align-self-md-start">
+                              {formulario.hora_inicio} - {formulario.hora_fin}
+                            </span>
+                          )}
+                        </div>
 
-                    <div className="col-12 col-md-4">
-                      <label htmlFor="hora_fin" className="form-label">
-                        Hora fin
-                      </label>
-                      <input
-                        id="hora_fin"
-                        name="hora_fin"
-                        type="time"
-                        className="form-control"
-                        value={formulario.hora_fin}
-                        onChange={handleChange}
-                        required
-                      />
+                        {cargandoHorarios ? (
+                          <div className="d-flex align-items-center gap-2 text-secondary">
+                            <div className="spinner-border spinner-border-sm text-primary" />
+                            <span>Cargando horarios...</span>
+                          </div>
+                        ) : !formulario.id_servicio || !formulario.fecha_cita ? (
+                          <AlertMessage
+                            type="info"
+                            message="Elige servicio y fecha para consultar disponibilidad."
+                          />
+                        ) : horarios.length === 0 ? (
+                          <AlertMessage
+                            type="warning"
+                            message="No hay horarios disponibles para esta fecha."
+                          />
+                        ) : (
+                          <div className="d-flex flex-wrap gap-2">
+                            {horarios.map((horario) => {
+                              const seleccionado =
+                                formulario.hora_inicio === horario.hora_inicio &&
+                                formulario.hora_fin === horario.hora_fin;
+
+                              return (
+                                <button
+                                  type="button"
+                                  className={`btn ${
+                                    seleccionado
+                                      ? "btn-primary"
+                                      : horario.disponible
+                                        ? "btn-outline-primary"
+                                        : "btn-outline-secondary"
+                                  }`}
+                                  key={`${horario.hora_inicio}-${horario.hora_fin}`}
+                                  disabled={!horario.disponible}
+                                  onClick={() => seleccionarHorario(horario)}
+                                >
+                                  {horario.hora_inicio} - {horario.hora_fin}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div className="col-12">
@@ -276,7 +380,7 @@ export default function AgendarCitaPage() {
                     className="btn btn-primary btn-lg w-100 mt-4"
                     disabled={enviando}
                   >
-                    {enviando ? "Enviando solicitud..." : "Solicitar cita"}
+                    {enviando ? "Agendando..." : "Solicitar cita"}
                   </button>
                 </form>
               </div>
