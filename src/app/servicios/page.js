@@ -412,7 +412,7 @@ export default function ServiciosPage() {
                                   <div className="d-flex justify-content-end gap-2">
                                     <button
                                       type="button"
-                                      className="btn btn-outline-primary btn-sm"
+                                      className="btn btn-accent btn-sm"
                                       onClick={() => editarServicio(servicio)}
                                     >
                                       Editar

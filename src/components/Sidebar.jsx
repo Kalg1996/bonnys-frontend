@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const enlaces = [
   { texto: "Dashboard", ruta: "/dashboard" },
@@ -11,17 +14,21 @@ const enlaces = [
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="dashboard-sidebar bg-white border-end">
       <div className="p-3 p-md-4">
-        <p className="text-uppercase small text-secondary fw-semibold mb-3">
+        <p className="text-uppercase small text-secondary fw-bold mb-3">
           Menú
         </p>
         <nav className="nav nav-pills flex-row flex-md-column gap-2">
           {enlaces.map((enlace) => (
             <Link
               href={enlace.ruta}
-              className="nav-link text-dark dashboard-sidebar-link"
+              className={`nav-link dashboard-sidebar-link ${
+                pathname === enlace.ruta ? "active" : ""
+              }`}
               key={enlace.ruta}
             >
               {enlace.texto}

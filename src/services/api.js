@@ -26,7 +26,7 @@ export async function apiFetch(path, options = {}) {
     : null;
 
   if (!response.ok) {
-    throw new Error(data?.mensaje || "Error al consumir la API");
+    throw new Error(data?.mensaje || data?.error || "Error al consumir la API");
   }
 
   return data;
