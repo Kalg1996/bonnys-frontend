@@ -575,6 +575,27 @@ a {
   color: #c7cbd1;
 }
 
+.bonnys-datepicker .datepicker-day-has-appointments {
+  color: #14532d;
+  font-weight: 800;
+  background: #dcfce7;
+  box-shadow: inset 0 0 0 1px #22c55e;
+}
+
+.bonnys-datepicker .datepicker-day-has-appointments:hover {
+  color: #14532d;
+  background: #bbf7d0;
+}
+
+.bonnys-datepicker
+  .react-datepicker__day--selected.datepicker-day-has-appointments,
+.bonnys-datepicker
+  .react-datepicker__day--keyboard-selected.datepicker-day-has-appointments {
+  color: #ffffff !important;
+  background: #16a34a !important;
+  box-shadow: inset 0 0 0 2px #14532d;
+}
+
 .appointment-slots-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));

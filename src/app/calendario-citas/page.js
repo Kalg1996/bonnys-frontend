@@ -153,6 +153,12 @@ export default function CalendarioCitasPage() {
     }, {});
   }, [citas]);
 
+  function obtenerClaseDiaCalendario(date) {
+    const key = formatearFecha(date);
+
+    return citasPorFecha[key]?.length ? "datepicker-day-has-appointments" : "";
+  }
+
   const fechaKey = formatearFecha(fechaSeleccionada);
   const citasDelDia = ordenarCitas(citasPorFecha[fechaKey] || []);
   const diasSemana = Array.from({ length: 7 }, (_, index) =>
@@ -278,6 +284,7 @@ export default function CalendarioCitasPage() {
                     onChange={seleccionarFecha}
                     inline
                     calendarClassName="bonnys-datepicker"
+                    dayClassName={obtenerClaseDiaCalendario}
                   />
                 </div>
               </div>
