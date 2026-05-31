@@ -6,6 +6,11 @@ import MediaCarousel from "@/components/MediaCarousel";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import {
+  agregarMediaProducto,
+  eliminarMediaProducto,
+  obtenerGaleriaProducto,
+} from "@/services/galeriaService";
+import {
   actualizarProducto,
   crearProducto,
   eliminarProducto,
@@ -59,6 +64,10 @@ export default function ProductosPage() {
   const [cargandoProductos, setCargandoProductos] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [subiendoArchivo, setSubiendoArchivo] = useState("");
+  const [productoGaleria, setProductoGaleria] = useState(null);
+  const [galeria, setGaleria] = useState([]);
+  const [cargandoGaleria, setCargandoGaleria] = useState(false);
+  const [subiendoGaleria, setSubiendoGaleria] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
@@ -150,6 +159,85 @@ export default function ProductosPage() {
     } finally {
       setSubiendoArchivo("");
       event.target.value = "";
+    }
+  }
+
+  async function abrirGaleria(producto) {
+    setProductoGaleria(producto);
+    setCargandoGaleria(true);
+    setMensaje("");
+    setError("");
+
+    try {
+      const respuesta = await obtenerGaleriaProducto(producto.id_producto);
+      setGaleria(respuesta?.data || []);
+    } catch (err) {
+      setError(err.message || "No se pudo cargar la galería.");
+    } finally {
+      setCargandoGaleria(false);
+    }
+  }
+
+  async function handleSubirImagenGaleria(event) {
+    const file = event.target.files?.[0];
+    if (!file || !productoGaleria) return;
+
+    setSubiendoGaleria("imagen");
+    setMensaje("");
+    setError("");
+
+    try {
+      const upload = await subirImagenProducto(file);
+      await agregarMediaProducto(productoGaleria.id_producto, {
+        tipo: "IMAGEN",
+        url: upload?.data?.url,
+        orden: galeria.length,
+      });
+      setMensaje("Imagen agregada a la galería.");
+      await abrirGaleria(productoGaleria);
+    } catch (err) {
+      setError(err.message || "No se pudo agregar la imagen a la galería.");
+    } finally {
+      setSubiendoGaleria("");
+      event.target.value = "";
+    }
+  }
+
+  async function handleSubirVideoGaleria(event) {
+    const file = event.target.files?.[0];
+    if (!file || !productoGaleria) return;
+
+    setSubiendoGaleria("video");
+    setMensaje("");
+    setError("");
+
+    try {
+      const upload = await subirVideoProducto(file);
+      await agregarMediaProducto(productoGaleria.id_producto, {
+        tipo: "VIDEO",
+        url: upload?.data?.url,
+        orden: galeria.length,
+      });
+      setMensaje("Video agregado a la galería.");
+      await abrirGaleria(productoGaleria);
+    } catch (err) {
+      setError(err.message || "No se pudo agregar el video a la galería.");
+    } finally {
+      setSubiendoGaleria("");
+      event.target.value = "";
+    }
+  }
+
+  async function handleEliminarMediaGaleria(idMedia) {
+    setMensaje("");
+    setError("");
+
+    try {
+      await eliminarMediaProducto(idMedia);
+      setMensaje("Elemento eliminado de la galería.");
+      await abrirGaleria(productoGaleria);
+    } catch (err) {
+      setError(err.message || "No se pudo eliminar el elemento.");
     }
   }
 
@@ -567,6 +655,13 @@ export default function ProductosPage() {
                                     </button>
                                     <button
                                       type="button"
+                                      className="btn btn-outline-primary btn-sm"
+                                      onClick={() => abrirGaleria(producto)}
+                                    >
+                                      Galería
+                                    </button>
+                                    <button
+                                      type="button"
                                       className="btn btn-outline-danger btn-sm"
                                       onClick={() => handleEliminar(producto)}
                                     >
@@ -584,6 +679,98 @@ export default function ProductosPage() {
                 </div>
               </div>
             </div>
+
+            {productoGaleria && (
+              <div className="col-12">
+                <div className="card border-0 shadow-sm">
+                  <div className="card-body p-4">
+                    <div className="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                      <div>
+                        <span className="badge text-bg-primary mb-2">Galería</span>
+                        <h2 className="h4 fw-bold mb-1">{productoGaleria.nombre}</h2>
+                        <p className="text-secondary mb-0">
+                          Administra imágenes y videos adicionales del producto.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary align-self-md-start"
+                        onClick={() => {
+                          setProductoGaleria(null);
+                          setGaleria([]);
+                        }}
+                      >
+                        Cerrar galería
+                      </button>
+                    </div>
+
+                    <div className="row g-3 mb-4">
+                      <div className="col-12 col-md-6">
+                        <label className="form-label" htmlFor="galeria_producto_imagen">
+                          Agregar imagen
+                        </label>
+                        <input
+                          id="galeria_producto_imagen"
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                          className="form-control"
+                          onChange={handleSubirImagenGaleria}
+                          disabled={subiendoGaleria === "imagen"}
+                        />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label" htmlFor="galeria_producto_video">
+                          Agregar video
+                        </label>
+                        <input
+                          id="galeria_producto_video"
+                          type="file"
+                          accept=".mp4,.webm,.mov,video/mp4,video/webm,video/quicktime"
+                          className="form-control"
+                          onChange={handleSubirVideoGaleria}
+                          disabled={subiendoGaleria === "video"}
+                        />
+                      </div>
+                    </div>
+
+                    {cargandoGaleria ? (
+                      <div className="py-4 text-center">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">Cargando...</span>
+                        </div>
+                      </div>
+                    ) : galeria.length === 0 ? (
+                      <p className="text-secondary mb-0">No hay elementos en la galería.</p>
+                    ) : (
+                      <div className="row g-3">
+                        {galeria.map((media) => (
+                          <div className="col-12 col-md-6 col-xl-3" key={media.id_media}>
+                            <div className="border rounded-3 p-2 h-100 bg-light">
+                              <MediaCarousel
+                                id={`producto-galeria-${media.id_media}`}
+                                imageUrl={media.tipo === "IMAGEN" ? media.url : ""}
+                                videoUrl={media.tipo === "VIDEO" ? media.url : ""}
+                                imageAlt={productoGaleria.nombre}
+                              />
+                              <div className="d-flex justify-content-between align-items-center gap-2 mt-2">
+                                <span className="badge text-bg-light border">{media.tipo}</span>
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-danger btn-sm"
+                                  onClick={() => handleEliminarMediaGaleria(media.id_media)}
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       </div>

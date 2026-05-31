@@ -82,9 +82,17 @@ export default function ServiciosPublicosPage() {
                         {servicio.duracion_minutos} min
                       </span>
                     </div>
-                    <Link href="/agendar-cita" className="btn btn-outline-primary">
-                      Agendar cita
-                    </Link>
+                    <div className="d-grid gap-2">
+                      <Link
+                        href={`/servicios-publicos/${servicio.id_servicio}`}
+                        className="btn btn-outline-primary"
+                      >
+                        Ver galería
+                      </Link>
+                      <Link href="/agendar-cita" className="btn btn-primary">
+                        Agendar cita
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

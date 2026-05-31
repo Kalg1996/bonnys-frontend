@@ -82,6 +82,12 @@ export default function ProductosPublicosPage() {
                         Stock: {producto.stock_actual}
                       </span>
                     </div>
+                    <Link
+                      href={`/productos-publicos/${producto.id_producto}`}
+                      className="btn btn-outline-primary mt-3"
+                    >
+                      Ver galería
+                    </Link>
                   </div>
                 </div>
               </div>

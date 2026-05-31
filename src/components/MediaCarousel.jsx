@@ -8,11 +8,13 @@ export default function MediaCarousel({
   imageUrl,
   videoUrl,
   imageAlt = "Imagen",
+  variant = "card",
 }) {
   const resolvedImageUrl = buildAssetUrl(imageUrl);
   const resolvedVideoUrl = buildAssetUrl(videoUrl);
   const hasImage = Boolean(resolvedImageUrl);
   const hasVideo = Boolean(resolvedVideoUrl);
+  const isDetail = variant === "detail";
 
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -21,7 +23,15 @@ export default function MediaCarousel({
   if (!hasImage && !hasVideo) return null;
 
   if (hasImage && !hasVideo) {
-    return (
+    return isDetail ? (
+      <div className="detail-media-frame">
+        <img
+          src={resolvedImageUrl}
+          alt={imageAlt}
+          className="detail-media-image"
+        />
+      </div>
+    ) : (
       <div
         className="public-card-image media-carousel-single"
         style={{ backgroundImage: `url(${resolvedImageUrl})` }}
@@ -33,7 +43,11 @@ export default function MediaCarousel({
 
   if (!hasImage && hasVideo) {
     return (
-      <div className="media-carousel-single media-carousel-video p-2">
+      <div
+        className={`media-carousel-single media-carousel-video p-2 ${
+          isDetail ? "detail-media-video" : ""
+        }`}
+      >
         <video controls preload="metadata" className="w-100 rounded">
           <source src={resolvedVideoUrl} />
         </video>
@@ -44,7 +58,9 @@ export default function MediaCarousel({
   return (
     <div
       id={id}
-      className="carousel slide media-carousel"
+      className={`carousel slide media-carousel ${
+        isDetail ? "detail-media-carousel" : ""
+      }`}
       data-bs-ride="false"
       data-bs-touch="true"
     >
@@ -67,15 +83,29 @@ export default function MediaCarousel({
 
       <div className="carousel-inner">
         <div className="carousel-item active">
-          <div
-            className="public-card-image"
-            style={{ backgroundImage: `url(${resolvedImageUrl})` }}
-            role="img"
-            aria-label={imageAlt}
-          />
+          {isDetail ? (
+            <div className="detail-media-frame">
+              <img
+                src={resolvedImageUrl}
+                alt={imageAlt}
+                className="detail-media-image"
+              />
+            </div>
+          ) : (
+            <div
+              className="public-card-image"
+              style={{ backgroundImage: `url(${resolvedImageUrl})` }}
+              role="img"
+              aria-label={imageAlt}
+            />
+          )}
         </div>
         <div className="carousel-item">
-          <div className="media-carousel-video p-2">
+          <div
+            className={`media-carousel-video p-2 ${
+              isDetail ? "detail-media-video" : ""
+            }`}
+          >
             <video controls preload="metadata" className="w-100 rounded">
               <source src={resolvedVideoUrl} />
             </video>
