@@ -49,6 +49,14 @@ function tieneStockBajo(producto) {
   return Number(producto.stock_actual) <= Number(producto.stock_minimo);
 }
 
+function construirVideoUrl(urlVideo) {
+  if (!urlVideo) return "";
+
+  return urlVideo.startsWith("/uploads")
+    ? `http://localhost:3000${urlVideo}`
+    : urlVideo;
+}
+
 export default function ProductosPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
@@ -428,6 +436,15 @@ export default function ProductosPage() {
                       />
                     </div>
 
+                    {formulario.url_video && (
+                      <div className="mb-4">
+                        <p className="small fw-bold text-secondary mb-2">Video</p>
+                        <video controls preload="metadata" className="w-100 rounded">
+                          <source src={construirVideoUrl(formulario.url_video)} />
+                        </video>
+                      </div>
+                    )}
+
                     <div className="d-grid gap-2">
                       <button
                         type="submit"
@@ -484,6 +501,7 @@ export default function ProductosPage() {
                         <thead className="table-light">
                           <tr>
                             <th>Foto</th>
+                            <th>Video</th>
                             <th>Producto</th>
                             <th>Precio</th>
                             <th>Stock</th>
@@ -494,7 +512,7 @@ export default function ProductosPage() {
                         <tbody>
                           {productos.length === 0 ? (
                             <tr>
-                              <td colSpan="6" className="text-center text-secondary py-4">
+                              <td colSpan="7" className="text-center text-secondary py-4">
                                 No hay productos registrados.
                               </td>
                             </tr>
@@ -510,6 +528,15 @@ export default function ProductosPage() {
                                     />
                                   ) : (
                                     <span className="text-secondary small">Sin foto</span>
+                                  )}
+                                </td>
+                                <td style={{ minWidth: "12rem" }}>
+                                  {producto.url_video ? (
+                                    <video controls preload="metadata" className="w-100 rounded">
+                                      <source src={construirVideoUrl(producto.url_video)} />
+                                    </video>
+                                  ) : (
+                                    <span className="text-secondary small">Sin video</span>
                                   )}
                                 </td>
                                 <td>

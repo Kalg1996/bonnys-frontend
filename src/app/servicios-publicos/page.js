@@ -10,6 +10,14 @@ const formatoMoneda = new Intl.NumberFormat("es-GT", {
   currency: "GTQ",
 });
 
+function construirVideoUrl(urlVideo) {
+  if (!urlVideo) return "";
+
+  return urlVideo.startsWith("/uploads")
+    ? `http://localhost:3000${urlVideo}`
+    : urlVideo;
+}
+
 export default function ServiciosPublicosPage() {
   const [servicios, setServicios] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -84,6 +92,14 @@ export default function ServiciosPublicosPage() {
                         {servicio.duracion_minutos} min
                       </span>
                     </div>
+                    {servicio.url_video && (
+                      <div className="mb-3">
+                        <p className="small fw-bold text-secondary mb-2">Video</p>
+                        <video controls preload="metadata" className="w-100 rounded">
+                          <source src={construirVideoUrl(servicio.url_video)} />
+                        </video>
+                      </div>
+                    )}
                     <Link href="/agendar-cita" className="btn btn-outline-primary">
                       Agendar cita
                     </Link>

@@ -10,6 +10,14 @@ const formatoMoneda = new Intl.NumberFormat("es-GT", {
   currency: "GTQ",
 });
 
+function construirVideoUrl(urlVideo) {
+  if (!urlVideo) return "";
+
+  return urlVideo.startsWith("/uploads")
+    ? `http://localhost:3000${urlVideo}`
+    : urlVideo;
+}
+
 export default function ProductosPublicosPage() {
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -84,6 +92,14 @@ export default function ProductosPublicosPage() {
                         Stock: {producto.stock_actual}
                       </span>
                     </div>
+                    {producto.url_video && (
+                      <div className="mt-3">
+                        <p className="small fw-bold text-secondary mb-2">Video</p>
+                        <video controls preload="metadata" className="w-100 rounded">
+                          <source src={construirVideoUrl(producto.url_video)} />
+                        </video>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
