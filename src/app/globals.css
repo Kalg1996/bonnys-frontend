@@ -256,6 +256,65 @@ a {
   background-size: cover;
 }
 
+.media-carousel,
+.media-carousel-single {
+  overflow: hidden;
+  border-radius: 1rem 1rem 0 0;
+  background: #fff7f7;
+}
+
+.media-carousel-video {
+  min-height: 13rem;
+  display: flex;
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(127, 29, 29, 0.08), rgba(185, 28, 28, 0.04)),
+    #111827;
+}
+
+.media-carousel-video video {
+  max-height: 13rem;
+  background-color: #111827;
+}
+
+.media-carousel .carousel-control-prev,
+.media-carousel .carousel-control-next {
+  width: 2.6rem;
+}
+
+.media-carousel .carousel-control-prev-icon,
+.media-carousel .carousel-control-next-icon {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  background-color: rgba(127, 29, 29, 0.72);
+  background-size: 58%;
+}
+
+.media-carousel .carousel-indicators {
+  margin-bottom: 0.35rem;
+}
+
+.media-carousel .carousel-indicators [data-bs-target] {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+}
+
+.table .media-carousel,
+.table .media-carousel-single {
+  border-radius: 0.75rem;
+}
+
+.table .public-card-image,
+.table .media-carousel-video {
+  min-height: 7rem;
+}
+
+.table .media-carousel-video video {
+  max-height: 7rem;
+}
+
 .login-page {
   min-height: 100vh;
   background:

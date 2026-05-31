@@ -2,21 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { buildAssetUrl } from "@/services/api";
+import MediaCarousel from "@/components/MediaCarousel";
 import { obtenerServiciosPublicos } from "@/services/publicService";
 
 const formatoMoneda = new Intl.NumberFormat("es-GT", {
   style: "currency",
   currency: "GTQ",
 });
-
-function construirVideoUrl(urlVideo) {
-  if (!urlVideo) return "";
-
-  return urlVideo.startsWith("/uploads")
-    ? `http://localhost:3000${urlVideo}`
-    : urlVideo;
-}
 
 export default function ServiciosPublicosPage() {
   const [servicios, setServicios] = useState([]);
@@ -71,14 +63,12 @@ export default function ServiciosPublicosPage() {
             {servicios.map((servicio) => (
               <div className="col-12 col-md-6 col-xl-4" key={servicio.id_servicio}>
                 <div className="card h-100 border-0 shadow-sm public-card">
-                  {servicio.url_foto && (
-                    <div
-                      className="public-card-image"
-                      style={{
-                        backgroundImage: `url(${buildAssetUrl(servicio.url_foto)})`,
-                      }}
-                    />
-                  )}
+                  <MediaCarousel
+                    id={`servicio-publico-${servicio.id_servicio}`}
+                    imageUrl={servicio.url_foto}
+                    videoUrl={servicio.url_video}
+                    imageAlt={servicio.nombre}
+                  />
                   <div className="card-body d-flex flex-column p-4">
                     <h2 className="h5 fw-bold">{servicio.nombre}</h2>
                     <p className="text-secondary flex-grow-1">
@@ -92,14 +82,6 @@ export default function ServiciosPublicosPage() {
                         {servicio.duracion_minutos} min
                       </span>
                     </div>
-                    {servicio.url_video && (
-                      <div className="mb-3">
-                        <p className="small fw-bold text-secondary mb-2">Video</p>
-                        <video controls preload="metadata" className="w-100 rounded">
-                          <source src={construirVideoUrl(servicio.url_video)} />
-                        </video>
-                      </div>
-                    )}
                     <Link href="/agendar-cita" className="btn btn-outline-primary">
                       Agendar cita
                     </Link>

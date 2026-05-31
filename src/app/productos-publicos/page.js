@@ -2,21 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { buildAssetUrl } from "@/services/api";
+import MediaCarousel from "@/components/MediaCarousel";
 import { obtenerProductosPublicos } from "@/services/publicService";
 
 const formatoMoneda = new Intl.NumberFormat("es-GT", {
   style: "currency",
   currency: "GTQ",
 });
-
-function construirVideoUrl(urlVideo) {
-  if (!urlVideo) return "";
-
-  return urlVideo.startsWith("/uploads")
-    ? `http://localhost:3000${urlVideo}`
-    : urlVideo;
-}
 
 export default function ProductosPublicosPage() {
   const [productos, setProductos] = useState([]);
@@ -71,14 +63,12 @@ export default function ProductosPublicosPage() {
             {productos.map((producto) => (
               <div className="col-12 col-md-6 col-xl-4" key={producto.id_producto}>
                 <div className="card h-100 border-0 shadow-sm public-card">
-                  {producto.url_foto && (
-                    <div
-                      className="public-card-image"
-                      style={{
-                        backgroundImage: `url(${buildAssetUrl(producto.url_foto)})`,
-                      }}
-                    />
-                  )}
+                  <MediaCarousel
+                    id={`producto-publico-${producto.id_producto}`}
+                    imageUrl={producto.url_foto}
+                    videoUrl={producto.url_video}
+                    imageAlt={producto.nombre}
+                  />
                   <div className="card-body d-flex flex-column p-4">
                     <h2 className="h5 fw-bold">{producto.nombre}</h2>
                     <p className="text-secondary flex-grow-1">
@@ -92,14 +82,6 @@ export default function ProductosPublicosPage() {
                         Stock: {producto.stock_actual}
                       </span>
                     </div>
-                    {producto.url_video && (
-                      <div className="mt-3">
-                        <p className="small fw-bold text-secondary mb-2">Video</p>
-                        <video controls preload="metadata" className="w-100 rounded">
-                          <source src={construirVideoUrl(producto.url_video)} />
-                        </video>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

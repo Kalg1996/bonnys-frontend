@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import MediaCarousel from "@/components/MediaCarousel";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import { buildAssetUrl } from "@/services/api";
 import {
   actualizarServicio,
   crearServicio,
@@ -41,14 +41,6 @@ function prepararServicio(formulario) {
     url_foto: formulario.url_foto || null,
     url_video: formulario.url_video || null,
   };
-}
-
-function construirVideoUrl(urlVideo) {
-  if (!urlVideo) return "";
-
-  return urlVideo.startsWith("/uploads")
-    ? `http://localhost:3000${urlVideo}`
-    : urlVideo;
 }
 
 export default function ServiciosPage() {
@@ -362,14 +354,6 @@ export default function ServiciosPage() {
                       )}
                     </div>
 
-                    {formulario.url_foto && (
-                      <img
-                        src={buildAssetUrl(formulario.url_foto)}
-                        alt="Vista previa del servicio"
-                        className="upload-preview mb-3"
-                      />
-                    )}
-
                     <div className="mb-3">
                       <label htmlFor="url_foto" className="form-label">
                         URL de foto
@@ -415,12 +399,17 @@ export default function ServiciosPage() {
                       />
                     </div>
 
-                    {formulario.url_video && (
+                    {(formulario.url_foto || formulario.url_video) && (
                       <div className="mb-4">
-                        <p className="small fw-bold text-secondary mb-2">Video</p>
-                        <video controls preload="metadata" className="w-100 rounded">
-                          <source src={construirVideoUrl(formulario.url_video)} />
-                        </video>
+                        <p className="small fw-bold text-secondary mb-2">
+                          Vista previa
+                        </p>
+                        <MediaCarousel
+                          id="servicio-form-media"
+                          imageUrl={formulario.url_foto}
+                          videoUrl={formulario.url_video}
+                          imageAlt="Vista previa del servicio"
+                        />
                       </div>
                     )}
 
@@ -479,8 +468,7 @@ export default function ServiciosPage() {
                       <table className="table table-hover align-middle mb-0">
                         <thead className="table-light">
                           <tr>
-                            <th>Foto</th>
-                            <th>Video</th>
+                            <th>Multimedia</th>
                             <th>Servicio</th>
                             <th>Precio</th>
                             <th>Duración</th>
@@ -491,31 +479,25 @@ export default function ServiciosPage() {
                         <tbody>
                           {servicios.length === 0 ? (
                             <tr>
-                              <td colSpan="7" className="text-center text-secondary py-4">
+                              <td colSpan="6" className="text-center text-secondary py-4">
                                 No hay servicios registrados.
                               </td>
                             </tr>
                           ) : (
                             servicios.map((servicio) => (
                               <tr key={servicio.id_servicio}>
-                                <td>
-                                  {servicio.url_foto ? (
-                                    <img
-                                      src={buildAssetUrl(servicio.url_foto)}
-                                      alt={servicio.nombre}
-                                      className="table-thumb"
+                                <td style={{ minWidth: "12rem", width: "12rem" }}>
+                                  {servicio.url_foto || servicio.url_video ? (
+                                    <MediaCarousel
+                                      id={`servicio-admin-${servicio.id_servicio}`}
+                                      imageUrl={servicio.url_foto}
+                                      videoUrl={servicio.url_video}
+                                      imageAlt={servicio.nombre}
                                     />
                                   ) : (
-                                    <span className="text-secondary small">Sin foto</span>
-                                  )}
-                                </td>
-                                <td style={{ minWidth: "12rem" }}>
-                                  {servicio.url_video ? (
-                                    <video controls preload="metadata" className="w-100 rounded">
-                                      <source src={construirVideoUrl(servicio.url_video)} />
-                                    </video>
-                                  ) : (
-                                    <span className="text-secondary small">Sin video</span>
+                                    <span className="text-secondary small">
+                                      Sin multimedia
+                                    </span>
                                   )}
                                 </td>
                                 <td>
