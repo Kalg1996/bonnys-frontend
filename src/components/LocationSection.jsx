@@ -1,11 +1,29 @@
-export const LOCATION_CONFIG = {
-  direccion: "Bonnys Beauty Studio, Guatemala",
-  texto:
-    "Visítanos en nuestro salón. La ubicación exacta se puede configurar cuando tengas el enlace real de Google Maps.",
-  mapaUrl: "",
-};
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  mezclarConfiguracion,
+  obtenerConfiguracionPublica,
+} from "@/services/configuracionSitioService";
 
 export default function LocationSection() {
+  const [configuracion, setConfiguracion] = useState(null);
+
+  useEffect(() => {
+    async function cargarConfiguracion() {
+      try {
+        const respuesta = await obtenerConfiguracionPublica();
+        setConfiguracion(respuesta?.data || null);
+      } catch {
+        setConfiguracion(null);
+      }
+    }
+
+    cargarConfiguracion();
+  }, []);
+
+  const config = mezclarConfiguracion(configuracion);
+
   return (
     <section className="py-5">
       <div className="public-page-header">
@@ -13,13 +31,16 @@ export default function LocationSection() {
           <div className="col-12 col-lg-5">
             <span className="badge text-bg-light border mb-2">Ubicación</span>
             <h2 className="h3 fw-bold mb-3">Encuéntranos</h2>
-            <p className="text-secondary mb-2">{LOCATION_CONFIG.texto}</p>
-            <p className="fw-semibold mb-0">{LOCATION_CONFIG.direccion}</p>
+            <p className="text-secondary mb-2">
+              Visítanos en nuestro salón. Puedes cambiar esta ubicación desde la
+              configuración del sitio.
+            </p>
+            <p className="fw-semibold mb-0">{config.direccion}</p>
           </div>
           <div className="col-12 col-lg-7">
-            {LOCATION_CONFIG.mapaUrl ? (
+            {config.google_maps_url ? (
               <iframe
-                src={LOCATION_CONFIG.mapaUrl}
+                src={config.google_maps_url}
                 className="location-map"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

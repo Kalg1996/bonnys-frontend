@@ -1,10 +1,30 @@
-const WHATSAPP_NUMBER = "50200000000";
-const WHATSAPP_MESSAGE =
-  "Hola, quiero más información sobre los servicios de Bonnys";
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  mezclarConfiguracion,
+  obtenerConfiguracionPublica,
+} from "@/services/configuracionSitioService";
 
 export default function WhatsAppButton() {
-  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    WHATSAPP_MESSAGE
+  const [configuracion, setConfiguracion] = useState(null);
+
+  useEffect(() => {
+    async function cargarConfiguracion() {
+      try {
+        const respuesta = await obtenerConfiguracionPublica();
+        setConfiguracion(respuesta?.data || null);
+      } catch {
+        setConfiguracion(null);
+      }
+    }
+
+    cargarConfiguracion();
+  }, []);
+
+  const config = mezclarConfiguracion(configuracion);
+  const href = `https://wa.me/${config.whatsapp_numero}?text=${encodeURIComponent(
+    config.whatsapp_mensaje_predeterminado
   )}`;
 
   return (

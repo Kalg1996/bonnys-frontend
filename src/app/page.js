@@ -1,7 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import LocationSection from "@/components/LocationSection";
 import PublicNavbar from "@/components/PublicNavbar";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { buildAssetUrl } from "@/services/api";
+import {
+  getThemeStyle,
+  mezclarConfiguracion,
+  obtenerConfiguracionPublica,
+} from "@/services/configuracionSitioService";
 
 const testimonios = [
   {
@@ -37,20 +46,47 @@ const promociones = [
 ];
 
 export default function Home() {
+  const [configuracion, setConfiguracion] = useState(null);
+
+  useEffect(() => {
+    async function cargarConfiguracion() {
+      try {
+        const respuesta = await obtenerConfiguracionPublica();
+        setConfiguracion(respuesta?.data || null);
+      } catch {
+        setConfiguracion(null);
+      }
+    }
+
+    cargarConfiguracion();
+  }, []);
+
+  const config = mezclarConfiguracion(configuracion);
+
   return (
-    <main className="public-home">
+    <main className="public-home" style={getThemeStyle(config)}>
       <PublicNavbar />
-      <section className="container py-5">
-        <div className="row align-items-center g-5 min-vh-100 py-lg-4">
+      <section
+        className="public-hero"
+        style={
+          config.portada_url
+            ? {
+                backgroundImage: `linear-gradient(120deg, rgba(127, 29, 29, 0.82), rgba(185, 28, 28, 0.48), rgba(17, 24, 39, 0.4)), url(${buildAssetUrl(config.portada_url)})`,
+              }
+            : undefined
+        }
+      >
+        <div className="container">
+          <div className="row align-items-center g-5">
           <div className="col-12 col-lg-7">
             <span className="badge text-bg-light border mb-3">
               Salón de belleza
             </span>
-            <h1 className="display-3 fw-bold text-dark mb-3">Bonnys</h1>
-            <p className="lead text-secondary mb-4">
-              Belleza, cuidado personal y experiencias pensadas para que te
-              sientas renovada. Explora nuestros servicios, productos y agenda
-              tu próxima cita en línea.
+            <h1 className="display-3 fw-bold text-white mb-3">
+              {config.titulo_portada || config.nombre_negocio}
+            </h1>
+            <p className="lead text-white-75 mb-4">
+              {config.subtitulo_portada}
             </p>
 
             <div className="d-flex flex-column flex-sm-row flex-wrap gap-3">
@@ -63,16 +99,13 @@ export default function Home() {
               <Link href="/agendar-cita" className="btn btn-accent btn-lg">
                 Agendar cita
               </Link>
-              <Link href="/login" className="btn btn-outline-secondary btn-lg">
-                Login administrador
-              </Link>
             </div>
           </div>
 
           <div className="col-12 col-lg-5">
             <div className="public-hero-panel bg-white border shadow-sm p-4 p-md-5">
               <p className="text-uppercase small text-primary fw-semibold mb-2">
-                Bonnys Beauty Studio
+                {config.nombre_negocio} Beauty Studio
               </p>
               <h2 className="h3 fw-bold mb-3">Agenda fácil, atención cálida.</h2>
               <p className="text-secondary mb-0">
@@ -82,7 +115,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+        </div>
+      </section>
 
+      <section className="container py-5">
         <div className="row g-4 pb-5">
           <div className="col-12 col-md-4">
             <div className="public-feature-card h-100 p-4">

@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
+import DynamicFavicon from "@/components/DynamicFavicon";
 
 export const metadata = {
   title: "Bonnys",
@@ -10,7 +11,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <DynamicFavicon />
+        {children}
+      </body>
     </html>
   );
 }

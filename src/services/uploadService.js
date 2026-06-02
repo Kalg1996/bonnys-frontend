@@ -36,11 +36,26 @@ export async function subirVideoServicio(file) {
   return subirArchivo("/uploads/servicios/video", file);
 }
 
+export async function subirLogoConfiguracion(file) {
+  return subirArchivo("/uploads/configuracion/logo", file);
+}
+
+export async function subirPortadaConfiguracion(file) {
+  return subirArchivo("/uploads/configuracion/portada", file);
+}
+
+export async function subirFaviconConfiguracion(file) {
+  return subirArchivo("/uploads/configuracion/favicon", file);
+}
+
 const uploadService = {
   subirImagenProducto,
   subirVideoProducto,
   subirImagenServicio,
   subirVideoServicio,
+  subirLogoConfiguracion,
+  subirPortadaConfiguracion,
+  subirFaviconConfiguracion,
 };
 
 export default uploadService;

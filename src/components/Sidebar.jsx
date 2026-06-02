@@ -13,6 +13,7 @@ const enlaces = [
   { texto: "Ingresos", ruta: "/ingresos" },
   { texto: "Gastos", ruta: "/gastos" },
   { texto: "Horarios del salón", ruta: "/horarios-salon" },
+  { texto: "Configuración", ruta: "/configuracion" },
 ];
 
 export default function Sidebar() {
