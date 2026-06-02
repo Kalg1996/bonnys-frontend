@@ -48,6 +48,10 @@ export async function subirFaviconConfiguracion(file) {
   return subirArchivo("/uploads/configuracion/favicon", file);
 }
 
+export async function subirFondoConfiguracion(file) {
+  return subirArchivo("/uploads/configuracion/fondo", file);
+}
+
 export async function subirFotoTestimonio(file) {
   return subirArchivo("/uploads/testimonios/foto", file);
 }
@@ -68,6 +72,7 @@ const uploadService = {
   subirLogoConfiguracion,
   subirPortadaConfiguracion,
   subirFaviconConfiguracion,
+  subirFondoConfiguracion,
   subirFotoTestimonio,
   subirImagenPromocion,
   subirMediaGaleriaTrabajo,

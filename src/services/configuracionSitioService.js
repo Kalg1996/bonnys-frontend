@@ -9,6 +9,12 @@ export const CONFIGURACION_DEFAULT = {
   color_principal: "#B91C1C",
   color_secundario: "#7F1D1D",
   color_acento: "#D97706",
+  fondo_tipo: "COLOR",
+  fondo_color_1: "#FFF1F2",
+  fondo_color_2: "#FEE2E2",
+  fondo_color_3: "#FFFFFF",
+  fondo_imagen_url: "",
+  fondo_gradiente_direccion: "135deg",
   telefono_principal: "",
   telefono_secundario: "",
   correo_contacto: "",
@@ -46,9 +52,15 @@ export function getThemeStyle(configuracion) {
   const config = mezclarConfiguracion(configuracion);
 
   return {
+    "--bonnys-primary": config.color_principal,
+    "--bonnys-secondary": config.color_secundario,
+    "--bonnys-accent": config.color_acento,
     "--bonnys-red": config.color_principal,
     "--bonnys-red-dark": config.color_secundario,
     "--bonnys-gold": config.color_acento,
+    "--bonnys-bg-color-1": config.fondo_color_1,
+    "--bonnys-bg-color-2": config.fondo_color_2,
+    "--bonnys-bg-color-3": config.fondo_color_3,
   };
 }
 

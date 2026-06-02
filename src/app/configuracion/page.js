@@ -13,6 +13,7 @@ import {
 } from "@/services/configuracionSitioService";
 import {
   subirFaviconConfiguracion,
+  subirFondoConfiguracion,
   subirLogoConfiguracion,
   subirPortadaConfiguracion,
 } from "@/services/uploadService";
@@ -111,6 +112,7 @@ export default function ConfiguracionPage() {
         logo_url: subirLogoConfiguracion,
         portada_url: subirPortadaConfiguracion,
         favicon_url: subirFaviconConfiguracion,
+        fondo_imagen_url: subirFondoConfiguracion,
       };
       const respuesta = await acciones[tipo](file);
       setConfiguracion((prevConfiguracion) => ({
@@ -133,10 +135,16 @@ export default function ConfiguracionPage() {
 
     try {
       const respuesta = await actualizarConfiguracionSitio(configuracion);
-      setConfiguracion({
+      const configuracionActualizada = {
         ...CONFIGURACION_DEFAULT,
         ...(respuesta?.data || {}),
-      });
+      };
+      setConfiguracion(configuracionActualizada);
+      window.dispatchEvent(
+        new CustomEvent("bonnys-theme-updated", {
+          detail: configuracionActualizada,
+        })
+      );
       setMensaje("Configuración actualizada correctamente.");
     } catch (err) {
       setError(err.message || "No se pudo guardar la configuración.");
@@ -271,6 +279,136 @@ export default function ConfiguracionPage() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-12">
+                  <div className="card border-0 shadow-sm">
+                    <div className="card-body p-4">
+                      <h2 className="h5 fw-bold mb-3">Fondo del sitio</h2>
+                      <div className="row g-3">
+                        <div className="col-12 col-md-4">
+                          <label className="form-label" htmlFor="fondo_tipo">
+                            Tipo de fondo
+                          </label>
+                          <select
+                            id="fondo_tipo"
+                            name="fondo_tipo"
+                            className="form-select"
+                            value={configuracion.fondo_tipo || "COLOR"}
+                            onChange={handleChange}
+                          >
+                            <option value="COLOR">Color sólido</option>
+                            <option value="GRADIENTE">Degradado</option>
+                            <option value="IMAGEN">Imagen</option>
+                          </select>
+                        </div>
+
+                        {(configuracion.fondo_tipo === "COLOR" ||
+                          configuracion.fondo_tipo === "GRADIENTE") && (
+                          <div className="col-12 col-md-4">
+                            <label className="form-label" htmlFor="fondo_color_1">
+                              Color de fondo 1
+                            </label>
+                            <div className="d-flex gap-2">
+                              <input
+                                id="fondo_color_1"
+                                name="fondo_color_1"
+                                type="color"
+                                className="form-control form-control-color"
+                                value={configuracion.fondo_color_1 || "#FFF1F2"}
+                                onChange={handleChange}
+                              />
+                              <input
+                                name="fondo_color_1"
+                                className="form-control"
+                                value={configuracion.fondo_color_1 || ""}
+                                onChange={handleChange}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {configuracion.fondo_tipo === "GRADIENTE" && (
+                          <>
+                            {[
+                              ["fondo_color_2", "Color de fondo 2", "#FEE2E2"],
+                              ["fondo_color_3", "Color de fondo 3", "#FFFFFF"],
+                            ].map(([campo, label, fallback]) => (
+                              <div className="col-12 col-md-4" key={campo}>
+                                <label className="form-label" htmlFor={campo}>
+                                  {label}
+                                </label>
+                                <div className="d-flex gap-2">
+                                  <input
+                                    id={campo}
+                                    name={campo}
+                                    type="color"
+                                    className="form-control form-control-color"
+                                    value={configuracion[campo] || fallback}
+                                    onChange={handleChange}
+                                  />
+                                  <input
+                                    name={campo}
+                                    className="form-control"
+                                    value={configuracion[campo] || ""}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+
+                            <div className="col-12 col-md-4">
+                              <label className="form-label" htmlFor="fondo_gradiente_direccion">
+                                Dirección del degradado
+                              </label>
+                              <select
+                                id="fondo_gradiente_direccion"
+                                name="fondo_gradiente_direccion"
+                                className="form-select"
+                                value={configuracion.fondo_gradiente_direccion || "135deg"}
+                                onChange={handleChange}
+                              >
+                                <option value="135deg">135deg</option>
+                                <option value="90deg">90deg</option>
+                                <option value="to right">to right</option>
+                                <option value="to bottom">to bottom</option>
+                              </select>
+                            </div>
+                          </>
+                        )}
+
+                        {configuracion.fondo_tipo === "IMAGEN" && (
+                          <div className="col-12 col-md-8">
+                            <label className="form-label" htmlFor="fondo_imagen_url">
+                              Imagen de fondo
+                            </label>
+                            <input
+                              id="fondo_imagen_url"
+                              name="fondo_imagen_url"
+                              className="form-control mb-2"
+                              value={configuracion.fondo_imagen_url || ""}
+                              onChange={handleChange}
+                            />
+                            <input
+                              type="file"
+                              className="form-control"
+                              accept=".jpg,.jpeg,.png,.webp"
+                              onChange={(event) => subirArchivo("fondo_imagen_url", event.target.files?.[0])}
+                              disabled={subiendo === "fondo_imagen_url"}
+                            />
+                            {configuracion.fondo_imagen_url && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={buildAssetUrl(configuracion.fondo_imagen_url)}
+                                alt="Fondo del sitio"
+                                className="config-preview mt-2"
+                              />
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
