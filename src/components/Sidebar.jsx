@@ -12,6 +12,9 @@ const enlaces = [
   { texto: "Calendario de citas", ruta: "/calendario-citas" },
   { texto: "Ingresos", ruta: "/ingresos" },
   { texto: "Gastos", ruta: "/gastos" },
+  { texto: "Testimonios", ruta: "/testimonios" },
+  { texto: "Promociones", ruta: "/promociones" },
+  { texto: "Galería de trabajos", ruta: "/galeria-trabajos" },
   { texto: "Horarios del salón", ruta: "/horarios-salon" },
   { texto: "Configuración", ruta: "/configuracion" },
 ];

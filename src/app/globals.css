@@ -73,6 +73,12 @@ a {
   border-radius: 0.75rem;
   font-weight: 700;
   letter-spacing: 0;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:hover,
+.btn:focus {
+  transform: translateY(-1px);
 }
 
 .btn-primary {
@@ -270,6 +276,58 @@ a {
   background: #ffffff;
 }
 
+.admin-table-thumb {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  border: 1px solid var(--bonnys-border);
+  background: #ffffff;
+}
+
+.admin-thumb-lg,
+.admin-media-preview {
+  width: 100%;
+  max-height: 18rem;
+  object-fit: contain;
+  border-radius: 1rem;
+  border: 1px solid var(--bonnys-border);
+  background: #fff7f7;
+}
+
+.admin-table-video {
+  width: 7rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  border: 1px solid var(--bonnys-border);
+  background: #111827;
+}
+
+.public-work-grid-item {
+  min-height: 16rem;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: #111827;
+  box-shadow: var(--bonnys-shadow);
+}
+
+.public-work-grid-item img,
+.public-work-grid-item video {
+  width: 100%;
+  height: 100%;
+  min-height: 16rem;
+  object-fit: cover;
+}
+
+.public-testimonial-photo {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--bonnys-red-soft);
+}
+
 .public-navbar .nav-link {
   color: var(--bonnys-gray);
   font-weight: 700;
@@ -306,6 +364,295 @@ a {
   border-radius: 1.1rem;
   background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 1rem 2rem rgba(127, 29, 29, 0.08);
+}
+
+.commercial-home {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(254, 226, 226, 0.72), transparent 22rem),
+    linear-gradient(180deg, #fff7f7 0%, #ffffff 42%, #fff7f7 100%);
+}
+
+.commercial-hero {
+  min-height: 550px;
+  display: flex;
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(127, 29, 29, 0.74), rgba(17, 24, 39, 0.64)),
+    linear-gradient(135deg, #7f1d1d, #b91c1c 52%, #d97706);
+  background-position: center;
+  background-size: cover;
+}
+
+.commercial-hero-content {
+  max-width: 56rem;
+  padding: 5rem 0;
+}
+
+.commercial-section {
+  padding: 5rem 0;
+}
+
+.commercial-section-heading {
+  max-width: 48rem;
+  margin: 0 auto 2.5rem;
+}
+
+.commercial-service-card,
+.premium-promo-card,
+.google-review-card {
+  overflow: hidden;
+  border: 1px solid var(--bonnys-border);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1rem 2.5rem rgba(127, 29, 29, 0.09);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.commercial-service-card:hover,
+.premium-promo-card:hover,
+.google-review-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(185, 28, 28, 0.24);
+  box-shadow: 0 1.4rem 3rem rgba(127, 29, 29, 0.16);
+}
+
+.commercial-service-image,
+.premium-promo-image {
+  width: 100%;
+  height: 16rem;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.28s ease;
+}
+
+.commercial-service-card:hover .commercial-service-image,
+.premium-promo-card:hover .premium-promo-image {
+  transform: scale(1.035);
+}
+
+.commercial-service-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--bonnys-red), var(--bonnys-gold));
+}
+
+.public-carousel {
+  position: relative;
+}
+
+.public-carousel-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.public-carousel-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.public-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2rem) / 3);
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  padding: 0.35rem 0.15rem 1rem;
+}
+
+.public-carousel-slide {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.public-carousel-slide > * {
+  min-height: 100%;
+}
+
+.promo-description,
+.commercial-service-card .text-secondary.small,
+.google-review-card .text-secondary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.promo-description,
+.commercial-service-card .text-secondary.small {
+  -webkit-line-clamp: 3;
+}
+
+.google-review-card .text-secondary {
+  -webkit-line-clamp: 5;
+}
+
+.instagram-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.instagram-grid-item {
+  position: relative;
+  min-height: 18rem;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 1.2rem;
+  background: #111827;
+  box-shadow: var(--bonnys-shadow);
+  cursor: pointer;
+}
+
+.instagram-grid-item img,
+.instagram-grid-item video {
+  width: 100%;
+  height: 100%;
+  min-height: 18rem;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+.instagram-grid-item:hover img,
+.instagram-grid-item:hover video,
+.instagram-grid-item:focus img,
+.instagram-grid-item:focus video {
+  transform: scale(1.05);
+  filter: brightness(0.72);
+}
+
+.instagram-grid-overlay {
+  position: absolute;
+  inset: auto 1rem 1rem;
+  color: #ffffff;
+  font-weight: 800;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.instagram-grid-item:hover .instagram-grid-overlay,
+.instagram-grid-item:focus .instagram-grid-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.instagram-grid-badge {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  padding: 0.35rem 0.65rem;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 999px;
+  background: rgba(127, 29, 29, 0.86);
+}
+
+.public-media-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(17, 24, 39, 0.88);
+}
+
+.public-media-modal-content {
+  width: min(64rem, 100%);
+}
+
+.public-media-modal-image,
+.public-media-modal video {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 1.25rem;
+  background: #111827;
+}
+
+.public-media-modal-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1081;
+}
+
+.premium-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.premium-price-old {
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.premium-price-new {
+  color: var(--bonnys-red);
+  font-size: 1.65rem;
+  font-weight: 900;
+}
+
+.google-review-card {
+  padding: 1.5rem;
+}
+
+.public-testimonial-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--bonnys-red), var(--bonnys-gold));
+}
+
+.public-footer {
+  color: #ffffff;
+  background:
+    radial-gradient(circle at top left, rgba(217, 119, 6, 0.18), transparent 24rem),
+    linear-gradient(135deg, var(--bonnys-red-dark), #111827);
+}
+
+.public-footer-logo {
+  width: auto;
+  height: 4rem;
+  max-width: 9rem;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.public-footer-link {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.public-footer-link:hover,
+.public-footer-link:focus {
+  color: #ffffff;
+}
+
+.public-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .public-feature-icon,
@@ -361,7 +708,11 @@ a {
 }
 
 .public-card-image {
+  width: 100%;
+  height: 13rem;
   min-height: 13rem;
+  object-fit: cover;
+  display: block;
   border-radius: 1rem 1rem 0 0;
   background-position: center;
   background-size: cover;
@@ -937,6 +1288,49 @@ a {
     padding: 3rem 0;
   }
 
+  .commercial-hero {
+    min-height: 350px;
+  }
+
+  .commercial-hero-content {
+    padding: 3rem 0;
+  }
+
+  .commercial-hero .display-2 {
+    font-size: 2.8rem;
+  }
+
+  .commercial-section {
+    padding: 3.5rem 0;
+  }
+
+  .instagram-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .public-carousel-controls {
+    justify-content: center;
+  }
+
+  .public-carousel-track {
+    grid-auto-columns: 100%;
+  }
+
+  .instagram-grid-item,
+  .instagram-grid-item img,
+  .instagram-grid-item video {
+    min-height: 16rem;
+  }
+
+  .commercial-service-image,
+  .premium-promo-image {
+    height: 13.5rem;
+  }
+
+  .public-media-modal {
+    padding: 0.75rem;
+  }
+
   .detail-media-frame {
     max-height: 280px;
     padding: 0.75rem;
@@ -967,5 +1361,15 @@ a {
   .btn-lg,
   .btn-sm {
     white-space: normal;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .instagram-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-carousel-track {
+    grid-auto-columns: calc((100% - 1rem) / 2);
   }
 }

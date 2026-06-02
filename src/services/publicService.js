@@ -30,11 +30,32 @@ export async function obtenerDisponibilidad(fecha, idServicio) {
   });
 }
 
+export async function obtenerTestimoniosPublicos() {
+  return apiFetch("/public/testimonios", {
+    method: "GET",
+  });
+}
+
+export async function obtenerPromocionesPublicas() {
+  return apiFetch("/public/promociones", {
+    method: "GET",
+  });
+}
+
+export async function obtenerGaleriaTrabajosPublica() {
+  return apiFetch("/public/galeria-trabajos", {
+    method: "GET",
+  });
+}
+
 const publicService = {
   obtenerServiciosPublicos,
   obtenerProductosPublicos,
   agendarCitaPublica,
   obtenerDisponibilidad,
+  obtenerTestimoniosPublicos,
+  obtenerPromocionesPublicas,
+  obtenerGaleriaTrabajosPublica,
 };
 
 export default publicService;

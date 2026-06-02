@@ -13,7 +13,9 @@ const enlaces = [
   { texto: "Inicio", ruta: "/" },
   { texto: "Servicios", ruta: "/servicios-publicos" },
   { texto: "Productos", ruta: "/productos-publicos" },
-  { texto: "Sobre nosotros", ruta: "/sobre-nosotros" },
+  { texto: "Galería", ruta: "/#galeria" },
+  { texto: "Promociones", ruta: "/#promociones" },
+  { texto: "Nosotros", ruta: "/sobre-nosotros" },
 ];
 
 export default function PublicNavbar() {
@@ -73,9 +75,6 @@ export default function PublicNavbar() {
             <div className="d-flex flex-column flex-lg-row gap-2 ms-lg-2 mt-3 mt-lg-0">
               <Link href="/agendar-cita" className="btn btn-primary btn-sm">
                 Agendar cita
-              </Link>
-              <Link href="/login" className="btn btn-outline-primary btn-sm">
-                Login administrador
               </Link>
             </div>
           </div>
