@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import AlertMessage from "@/components/AlertMessage";
+import PublicNavbar from "@/components/PublicNavbar";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import {
   agendarCitaPublica,
   obtenerDisponibilidad,
@@ -183,6 +185,7 @@ export default function AgendarCitaPage() {
 
   return (
     <main className="public-page">
+      <PublicNavbar />
       <section className="container py-5">
         <div className="row justify-content-center">
           <div className="col-12 col-lg-9 col-xl-8">
@@ -437,6 +440,7 @@ export default function AgendarCitaPage() {
           </div>
         </div>
       </section>
+      <WhatsAppButton />
     </main>
   );
 }

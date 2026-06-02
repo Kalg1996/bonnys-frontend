@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AlertMessage from "@/components/AlertMessage";
 import MediaCarousel from "@/components/MediaCarousel";
+import PublicNavbar from "@/components/PublicNavbar";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { obtenerGaleriaPublicaProducto } from "@/services/galeriaService";
 import { obtenerProductosPublicos } from "@/services/publicService";
 
@@ -46,6 +48,7 @@ export default function ProductoPublicoDetallePage() {
 
   return (
     <main className="public-page">
+      <PublicNavbar />
       <section className="container py-5">
         <div className="public-page-header d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
           <div>
@@ -123,6 +126,7 @@ export default function ProductoPublicoDetallePage() {
           </>
         )}
       </section>
+      <WhatsAppButton />
     </main>
   );
 }
