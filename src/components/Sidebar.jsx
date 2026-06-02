@@ -16,6 +16,7 @@ const enlaces = [
   { texto: "Promociones", ruta: "/promociones" },
   { texto: "Galería de trabajos", ruta: "/galeria-trabajos" },
   { texto: "Horarios del salón", ruta: "/horarios-salon" },
+  { texto: "Almacenamiento", ruta: "/almacenamiento" },
   { texto: "Configuración", ruta: "/configuracion" },
 ];
 

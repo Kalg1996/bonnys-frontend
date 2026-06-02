@@ -69,6 +69,10 @@ a {
   border-color: var(--bonnys-border) !important;
 }
 
+.bg-orange {
+  background-color: #f97316 !important;
+}
+
 .btn {
   border-radius: 0.75rem;
   font-weight: 700;
@@ -176,6 +180,22 @@ a {
   margin-top: 0.35rem;
   border-radius: 999px;
   background: currentColor;
+}
+
+.storage-progress {
+  height: 1.6rem;
+  border-radius: 999px;
+  background: #fee2e2;
+}
+
+.storage-progress .progress-bar {
+  font-weight: 800;
+}
+
+.storage-metric {
+  border: 1px solid var(--bonnys-border);
+  border-radius: 1rem;
+  background: #ffffff;
 }
 
 .alert-success {
@@ -683,28 +703,55 @@ a {
     #fff7f7;
 }
 
-.whatsapp-float {
+.social-float {
   position: fixed;
   right: 1.25rem;
   bottom: 1.25rem;
   z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.social-float-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 4rem;
-  min-height: 4rem;
-  padding: 0 1rem;
+  width: 4rem;
+  height: 4rem;
   color: #ffffff;
   font-weight: 800;
+  letter-spacing: 0;
   border-radius: 999px;
-  background: #25d366;
-  box-shadow: 0 1rem 2.2rem rgba(18, 140, 126, 0.28);
+  box-shadow: 0 1rem 2.2rem rgba(17, 24, 39, 0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
-.whatsapp-float:hover,
-.whatsapp-float:focus {
+.social-float-link:hover,
+.social-float-link:focus {
   color: #ffffff;
-  background: #128c7e;
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+  box-shadow: 0 1.2rem 2.6rem rgba(17, 24, 39, 0.24);
+}
+
+.social-float-whatsapp {
+  background: #25d366;
+}
+
+.social-float-facebook {
+  background: #1877f2;
+  font-size: 1.75rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.social-float-instagram {
+  background:
+    radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 18%, #fd5949 40%, #d6249f 68%, #285aeb 100%);
+}
+
+.social-float-tiktok {
+  background: #111827;
 }
 
 .public-card-image {
@@ -1349,11 +1396,15 @@ a {
     padding: 1.25rem;
   }
 
-  .whatsapp-float {
+  .social-float {
     right: 1rem;
     bottom: 1rem;
-    min-width: 3.4rem;
-    min-height: 3.4rem;
+    gap: 0.45rem;
+  }
+
+  .social-float-link {
+    width: 3.25rem;
+    height: 3.25rem;
     font-size: 0.85rem;
   }
 
