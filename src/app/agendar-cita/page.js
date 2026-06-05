@@ -45,6 +45,52 @@ function parsearFecha(fecha) {
   return new Date(year, month - 1, day);
 }
 
+function obtenerInicioHoy() {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  return hoy;
+}
+
+function obtenerFechaHoy() {
+  return formatearFecha(new Date());
+}
+
+function horaAMinutos(hora) {
+  const [horas, minutos] = String(hora).slice(0, 5).split(":").map(Number);
+
+  return horas * 60 + minutos;
+}
+
+function obtenerMinutosActuales() {
+  const ahora = new Date();
+
+  return ahora.getHours() * 60 + ahora.getMinutes();
+}
+
+function esFechaPasada(fecha) {
+  return Boolean(fecha) && fecha < obtenerFechaHoy();
+}
+
+function esHorarioPasado(fecha, horaInicio) {
+  return (
+    Boolean(fecha) &&
+    Boolean(horaInicio) &&
+    fecha === obtenerFechaHoy() &&
+    horaAMinutos(horaInicio) <= obtenerMinutosActuales()
+  );
+}
+
+function filtrarHorariosVigentes(fecha, horariosDisponibilidad) {
+  if (fecha !== obtenerFechaHoy()) {
+    return horariosDisponibilidad;
+  }
+
+  return horariosDisponibilidad.filter(
+    (horario) => !esHorarioPasado(fecha, horario.hora_inicio)
+  );
+}
+
 export default function AgendarCitaPage() {
   const [servicios, setServicios] = useState([]);
   const [formulario, setFormulario] = useState(formularioInicial);
@@ -85,13 +131,26 @@ export default function AgendarCitaPage() {
       setAvisoDisponibilidad("");
 
       try {
+        if (esFechaPasada(formulario.fecha_cita)) {
+          setAvisoDisponibilidad("No puedes seleccionar una fecha pasada.");
+          return;
+        }
+
         const respuesta = await obtenerDisponibilidad(
           formulario.fecha_cita,
           formulario.id_servicio
         );
-        const horariosRespuesta = respuesta?.data?.horarios || [];
+        const horariosRespuesta = filtrarHorariosVigentes(
+          formulario.fecha_cita,
+          respuesta?.data?.horarios || []
+        );
         setHorarios(horariosRespuesta);
-        setAvisoDisponibilidad(respuesta?.data?.mensaje || "");
+        setAvisoDisponibilidad(
+          respuesta?.data?.mensaje ||
+            (formulario.fecha_cita === obtenerFechaHoy() && horariosRespuesta.length === 0
+              ? "Ya no hay horarios disponibles para hoy."
+              : "")
+        );
       } catch (err) {
         setError(err.message || "No se pudieron cargar los horarios.");
       } finally {
@@ -121,16 +180,34 @@ export default function AgendarCitaPage() {
   }
 
   function handleFechaChange(date) {
+    const fechaSeleccionada = formatearFecha(date);
+
+    if (esFechaPasada(fechaSeleccionada)) {
+      setError("No puedes seleccionar una fecha pasada.");
+      setFormulario((prevFormulario) => ({
+        ...prevFormulario,
+        fecha_cita: "",
+        hora_inicio: "",
+        hora_fin: "",
+      }));
+      setHorarios([]);
+      return;
+    }
+
+    setError("");
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      fecha_cita: formatearFecha(date),
+      fecha_cita: fechaSeleccionada,
       hora_inicio: "",
       hora_fin: "",
     }));
   }
 
   function seleccionarHorario(horario) {
-    if (!horario.disponible) return;
+    if (!horario.disponible || esHorarioPasado(formulario.fecha_cita, horario.hora_inicio)) {
+      setError("No puedes seleccionar un horario que ya pasó.");
+      return;
+    }
 
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
@@ -155,8 +232,16 @@ export default function AgendarCitaPage() {
         throw new Error("Selecciona una fecha.");
       }
 
+      if (esFechaPasada(formulario.fecha_cita)) {
+        throw new Error("No puedes agendar una cita en una fecha pasada.");
+      }
+
       if (!formulario.hora_inicio || !formulario.hora_fin) {
         throw new Error("Selecciona un horario disponible.");
+      }
+
+      if (esHorarioPasado(formulario.fecha_cita, formulario.hora_inicio)) {
+        throw new Error("No puedes agendar una cita en un horario que ya pasó.");
       }
 
       if (!formulario.nombre.trim()) {
@@ -344,7 +429,8 @@ export default function AgendarCitaPage() {
                           <DatePicker
                             selected={parsearFecha(formulario.fecha_cita)}
                             onChange={handleFechaChange}
-                            minDate={new Date()}
+                            minDate={obtenerInicioHoy()}
+                            filterDate={(date) => formatearFecha(date) >= obtenerFechaHoy()}
                             inline
                             calendarClassName="bonnys-datepicker"
                           />
@@ -391,9 +477,14 @@ export default function AgendarCitaPage() {
                         ) : (
                           <div className="appointment-slots-grid">
                             {horarios.map((horario) => {
+                              const horarioPasado = esHorarioPasado(
+                                formulario.fecha_cita,
+                                horario.hora_inicio
+                              );
                               const seleccionado =
                                 formulario.hora_inicio === horario.hora_inicio &&
                                 formulario.hora_fin === horario.hora_fin;
+                              const disponible = horario.disponible && !horarioPasado;
 
                               return (
                                 <button
@@ -401,12 +492,12 @@ export default function AgendarCitaPage() {
                                   className={`btn appointment-slot-btn ${
                                     seleccionado
                                       ? "btn-primary"
-                                      : horario.disponible
+                                      : disponible
                                         ? "btn-outline-primary"
                                         : "btn-outline-secondary"
                                   }`}
                                   key={`${horario.hora_inicio}-${horario.hora_fin}`}
-                                  disabled={!horario.disponible}
+                                  disabled={!disponible}
                                   onClick={() => seleccionarHorario(horario)}
                                 >
                                   {horario.hora_inicio} - {horario.hora_fin}
