@@ -12,7 +12,7 @@ export default function Navbar({ usuario, onCerrarSesion }) {
           </span>
           <button
             type="button"
-            className="btn btn-outline-danger btn-sm"
+            className="btn btn-bonnys-outline btn-sm"
             onClick={onCerrarSesion}
           >
             Cerrar sesión

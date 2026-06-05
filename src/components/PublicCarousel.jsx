@@ -24,7 +24,7 @@ export default function PublicCarousel({ items, renderItem, itemKey, label }) {
       <div className="public-carousel-controls">
         <button
           type="button"
-          className="btn btn-outline-primary public-carousel-btn"
+          className="btn btn-bonnys-outline public-carousel-btn"
           onClick={() => mover(-1)}
           aria-label={`Anterior ${label || ""}`}
         >
@@ -32,7 +32,7 @@ export default function PublicCarousel({ items, renderItem, itemKey, label }) {
         </button>
         <button
           type="button"
-          className="btn btn-outline-primary public-carousel-btn"
+          className="btn btn-bonnys-outline public-carousel-btn"
           onClick={() => mover(1)}
           aria-label={`Siguiente ${label || ""}`}
         >

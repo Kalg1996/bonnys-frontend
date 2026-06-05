@@ -73,7 +73,7 @@ export default function PublicNavbar() {
               </Link>
             ))}
             <div className="d-flex flex-column flex-lg-row gap-2 ms-lg-2 mt-3 mt-lg-0">
-              <Link href="/agendar-cita" className="btn btn-primary btn-sm">
+              <Link href="/agendar-cita" className="btn btn-bonnys-primary btn-sm">
                 Agendar cita
               </Link>
             </div>
