@@ -11,6 +11,7 @@ import {
   obtenerDisponibilidad,
   obtenerServiciosPublicos,
 } from "@/services/publicService";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   nombre: "",
@@ -103,6 +104,9 @@ export default function AgendarCitaPage() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      telefonos: ["telefono1", "telefono2"],
+    });
 
     setFormulario((prevFormulario) => {
       const debeLimpiarHorario =
@@ -110,7 +114,7 @@ export default function AgendarCitaPage() {
 
       return {
         ...prevFormulario,
-        [name]: value,
+        [name]: valor,
         ...(debeLimpiarHorario ? { hora_inicio: "", hora_fin: "" } : {}),
       };
     });
@@ -191,7 +195,7 @@ export default function AgendarCitaPage() {
           <div className="col-12 col-lg-9 col-xl-8">
             <div className="public-page-header d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
               <div>
-                <span className="badge text-bg-light border mb-2">Bonnys</span>
+                <span className="badge text-bg-light border mb-2">Salón de belleza</span>
                 <h1 className="h2 fw-bold mb-1">Agendar cita</h1>
                 <p className="text-secondary mb-0">
                   Completa tus datos y solicita tu cita sin iniciar sesión.
@@ -246,7 +250,8 @@ export default function AgendarCitaPage() {
                       <input
                         id="telefono1"
                         name="telefono1"
-                        type="tel"
+                        type="text"
+                        inputMode="numeric"
                         className="form-control"
                         value={formulario.telefono1}
                         onChange={handleChange}
@@ -261,7 +266,8 @@ export default function AgendarCitaPage() {
                       <input
                         id="telefono2"
                         name="telefono2"
-                        type="tel"
+                        type="text"
+                        inputMode="numeric"
                         className="form-control"
                         value={formulario.telefono2}
                         onChange={handleChange}
@@ -284,7 +290,7 @@ export default function AgendarCitaPage() {
 
                     <div className="col-12 col-md-6">
                       <label htmlFor="direccion" className="form-label">
-                        Dirección
+                        Dirección (solo si el servicio es adomicilio)
                       </label>
                       <input
                         id="direccion"

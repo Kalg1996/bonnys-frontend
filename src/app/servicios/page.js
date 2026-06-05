@@ -26,6 +26,7 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   nombre: "",
@@ -106,10 +107,14 @@ export default function ServiciosPage() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      decimales: ["precio"],
+      enteros: ["duracion_minutos"],
+    });
 
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      [name]: value,
+      [name]: valor,
     }));
   }
 
@@ -390,9 +395,8 @@ export default function ServiciosPage() {
                         <input
                           id="precio"
                           name="precio"
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
                           className="form-control"
                           value={formulario.precio}
                           onChange={handleChange}
@@ -407,8 +411,8 @@ export default function ServiciosPage() {
                         <input
                           id="duracion_minutos"
                           name="duracion_minutos"
-                          type="number"
-                          min="1"
+                          type="text"
+                          inputMode="numeric"
                           className="form-control"
                           value={formulario.duracion_minutos}
                           onChange={handleChange}

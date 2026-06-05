@@ -26,6 +26,7 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   nombre: "",
@@ -112,10 +113,14 @@ export default function ProductosPage() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      decimales: ["precio_venta"],
+      enteros: ["stock_actual", "stock_minimo"],
+    });
 
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      [name]: value,
+      [name]: valor,
     }));
   }
 
@@ -396,9 +401,8 @@ export default function ProductosPage() {
                       <input
                         id="precio_venta"
                         name="precio_venta"
-                        type="number"
-                        min="0"
-                        step="0.01"
+                        type="text"
+                        inputMode="decimal"
                         className="form-control"
                         value={formulario.precio_venta}
                         onChange={handleChange}
@@ -414,8 +418,8 @@ export default function ProductosPage() {
                         <input
                           id="stock_actual"
                           name="stock_actual"
-                          type="number"
-                          min="0"
+                          type="text"
+                          inputMode="numeric"
                           className="form-control"
                           value={formulario.stock_actual}
                           onChange={handleChange}
@@ -429,8 +433,8 @@ export default function ProductosPage() {
                         <input
                           id="stock_minimo"
                           name="stock_minimo"
-                          type="number"
-                          min="0"
+                          type="text"
+                          inputMode="numeric"
                           className="form-control"
                           value={formulario.stock_minimo}
                           onChange={handleChange}

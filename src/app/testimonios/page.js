@@ -14,6 +14,7 @@ import {
 } from "@/services/testimonioService";
 import { subirFotoTestimonio } from "@/services/uploadService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   nombre_cliente: "",
@@ -70,10 +71,13 @@ export default function TestimoniosPage() {
 
   function handleChange(event) {
     const { name, type, checked, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      enteros: ["calificacion"],
+    });
 
     setFormulario((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : valor,
     }));
   }
 
@@ -239,9 +243,8 @@ export default function TestimoniosPage() {
                       <input
                         id="calificacion"
                         name="calificacion"
-                        type="number"
-                        min="1"
-                        max="5"
+                        type="text"
+                        inputMode="numeric"
                         className="form-control"
                         value={formulario.calificacion}
                         onChange={handleChange}

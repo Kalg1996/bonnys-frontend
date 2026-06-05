@@ -66,6 +66,54 @@ function nombreUsuario(usuario) {
   return `${usuario.nombre || ""} ${usuario.apellido || ""}`.trim();
 }
 
+function normalizarWhatsApp(telefono) {
+  const numeros = String(telefono || "").replace(/\D/g, "");
+
+  if (!numeros) return "";
+
+  return numeros.startsWith("502") ? numeros : `502${numeros}`;
+}
+
+function ContactoCliente({ cita }) {
+  const whatsapp = normalizarWhatsApp(cita.cliente_telefono1);
+
+  if (
+    !cita.cliente_telefono1 &&
+    !cita.cliente_telefono2 &&
+    !cita.cliente_correo &&
+    !cita.cliente_direccion
+  ) {
+    return <span className="text-secondary small">Sin contacto</span>;
+  }
+
+  return (
+    <div className="small">
+      {cita.cliente_telefono1 && (
+        <div className="fw-semibold">{cita.cliente_telefono1}</div>
+      )}
+      {cita.cliente_telefono2 && (
+        <div className="text-secondary">{cita.cliente_telefono2}</div>
+      )}
+      {cita.cliente_correo && (
+        <div className="text-secondary">{cita.cliente_correo}</div>
+      )}
+      {cita.cliente_direccion && (
+        <div className="text-secondary">{cita.cliente_direccion}</div>
+      )}
+      {whatsapp && (
+        <a
+          href={`https://wa.me/${whatsapp}`}
+          target="_blank"
+          rel="noreferrer"
+          className="btn btn-bonnys-outline btn-sm mt-2"
+        >
+          WhatsApp
+        </a>
+      )}
+    </div>
+  );
+}
+
 export default function CitasPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
@@ -452,6 +500,7 @@ export default function CitasPage() {
                         <thead className="table-light">
                           <tr>
                             <th>Cliente</th>
+                            <th>Contacto</th>
                             <th>Servicio</th>
                             <th>Usuario</th>
                             <th>Fecha</th>
@@ -463,7 +512,7 @@ export default function CitasPage() {
                         <tbody>
                           {citas.length === 0 ? (
                             <tr>
-                              <td colSpan="7" className="text-center text-secondary py-4">
+                              <td colSpan="8" className="text-center text-secondary py-4">
                                 No hay citas registradas.
                               </td>
                             </tr>
@@ -471,6 +520,9 @@ export default function CitasPage() {
                             citas.map((cita) => (
                               <tr key={cita.id_cita}>
                                 <td>{cita.cliente || cita.id_cliente}</td>
+                                <td>
+                                  <ContactoCliente cita={cita} />
+                                </td>
                                 <td>{cita.servicio || cita.id_servicio}</td>
                                 <td>{cita.usuario || cita.id_usuario}</td>
                                 <td>{formatoFechaInput(cita.fecha_cita)}</td>

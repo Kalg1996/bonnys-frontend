@@ -14,6 +14,7 @@ import {
 } from "@/services/promocionService";
 import { subirImagenPromocion } from "@/services/uploadService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   titulo: "",
@@ -86,10 +87,13 @@ export default function PromocionesPage() {
 
   function handleChange(event) {
     const { name, type, checked, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      decimales: ["precio_original", "precio_promocion"],
+    });
 
     setFormulario((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : valor,
     }));
   }
 
@@ -258,9 +262,8 @@ export default function PromocionesPage() {
                         <input
                           id="precio_original"
                           name="precio_original"
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
                           className="form-control"
                           value={formulario.precio_original}
                           onChange={handleChange}
@@ -273,9 +276,8 @@ export default function PromocionesPage() {
                         <input
                           id="precio_promocion"
                           name="precio_promocion"
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
                           className="form-control"
                           value={formulario.precio_promocion}
                           onChange={handleChange}

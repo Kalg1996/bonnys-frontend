@@ -17,6 +17,7 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const categorias = ["RENTA", "LUZ", "AGUA", "PRODUCTOS", "PUBLICIDAD", "OTRO"];
 const metodosPago = ["EFECTIVO", "TARJETA", "TRANSFERENCIA", "OTRO"];
@@ -115,10 +116,13 @@ export default function GastosPage() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      decimales: ["monto"],
+    });
 
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      [name]: value,
+      [name]: valor,
     }));
   }
 
@@ -269,9 +273,8 @@ export default function GastosPage() {
                       <input
                         id="monto"
                         name="monto"
-                        type="number"
-                        min="0"
-                        step="0.01"
+                        type="text"
+                        inputMode="decimal"
                         className="form-control"
                         value={formulario.monto}
                         onChange={handleChange}

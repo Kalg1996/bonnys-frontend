@@ -101,6 +101,54 @@ function ordenarCitas(citas) {
   );
 }
 
+function normalizarWhatsApp(telefono) {
+  const numeros = String(telefono || "").replace(/\D/g, "");
+
+  if (!numeros) return "";
+
+  return numeros.startsWith("502") ? numeros : `502${numeros}`;
+}
+
+function ContactoCliente({ cita }) {
+  const whatsapp = normalizarWhatsApp(cita.cliente_telefono1);
+
+  if (
+    !cita.cliente_telefono1 &&
+    !cita.cliente_telefono2 &&
+    !cita.cliente_correo &&
+    !cita.cliente_direccion
+  ) {
+    return <p className="text-secondary mb-0">Sin contacto registrado</p>;
+  }
+
+  return (
+    <div className="small">
+      {cita.cliente_telefono1 && (
+        <p className="mb-1 fw-semibold">{cita.cliente_telefono1}</p>
+      )}
+      {cita.cliente_telefono2 && (
+        <p className="mb-1 text-secondary">{cita.cliente_telefono2}</p>
+      )}
+      {cita.cliente_correo && (
+        <p className="mb-1 text-secondary">{cita.cliente_correo}</p>
+      )}
+      {cita.cliente_direccion && (
+        <p className="mb-2 text-secondary">{cita.cliente_direccion}</p>
+      )}
+      {whatsapp && (
+        <a
+          href={`https://wa.me/${whatsapp}`}
+          target="_blank"
+          rel="noreferrer"
+          className="btn btn-bonnys-outline btn-sm"
+        >
+          WhatsApp
+        </a>
+      )}
+    </div>
+  );
+}
+
 export default function CalendarioCitasPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
@@ -424,6 +472,10 @@ export default function CalendarioCitasPage() {
                       <div>
                         <p className="text-secondary small mb-1">Cliente</p>
                         <p className="fw-bold mb-0">{citaSeleccionada.cliente}</p>
+                      </div>
+                      <div>
+                        <p className="text-secondary small mb-1">Contacto</p>
+                        <ContactoCliente cita={citaSeleccionada} />
                       </div>
                       <div>
                         <p className="text-secondary small mb-1">Servicio</p>

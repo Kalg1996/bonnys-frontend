@@ -16,6 +16,7 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { normalizarCampoNumerico } from "@/utils/numberInput";
 
 const formularioInicial = {
   nombre: "",
@@ -77,10 +78,13 @@ export default function ClientesPage() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const valor = normalizarCampoNumerico(name, value, {
+      telefonos: ["telefono1", "telefono2"],
+    });
 
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
-      [name]: value,
+      [name]: valor,
     }));
   }
 
@@ -226,7 +230,8 @@ export default function ClientesPage() {
                       <input
                         id="telefono1"
                         name="telefono1"
-                        type="tel"
+                        type="text"
+                        inputMode="numeric"
                         className="form-control"
                         value={formulario.telefono1}
                         onChange={handleChange}
@@ -240,7 +245,8 @@ export default function ClientesPage() {
                       <input
                         id="telefono2"
                         name="telefono2"
-                        type="tel"
+                        type="text"
+                        inputMode="numeric"
                         className="form-control"
                         value={formulario.telefono2}
                         onChange={handleChange}
