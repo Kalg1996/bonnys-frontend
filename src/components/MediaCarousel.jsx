@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { buildAssetUrl } from "@/services/api";
+import VideoPlayer from "@/components/VideoPlayer";
 
 export default function MediaCarousel({
   id,
@@ -49,9 +50,11 @@ export default function MediaCarousel({
           isDetail ? "detail-media-video" : ""
         }`}
       >
-        <video controls preload="metadata" className="w-100 rounded">
-          <source src={resolvedVideoUrl} />
-        </video>
+        <VideoPlayer
+          url={videoUrl}
+          title={imageAlt}
+          className="w-100 rounded"
+        />
       </div>
     );
   }
@@ -108,9 +111,11 @@ export default function MediaCarousel({
               isDetail ? "detail-media-video" : ""
             }`}
           >
-            <video controls preload="metadata" className="w-100 rounded">
-              <source src={resolvedVideoUrl} />
-            </video>
+            <VideoPlayer
+              url={videoUrl}
+              title={imageAlt}
+              className="w-100 rounded"
+            />
           </div>
         </div>
       </div>

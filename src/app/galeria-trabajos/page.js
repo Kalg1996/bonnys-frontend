@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import VideoPlayer from "@/components/VideoPlayer";
 import { buildAssetUrl } from "@/services/api";
 import {
   actualizarGaleriaTrabajo,
@@ -31,13 +32,11 @@ function MediaPreview({ item, grande = false }) {
 
   if (item.tipo === "VIDEO") {
     return (
-      <video
-        controls
-        preload="metadata"
+      <VideoPlayer
+        url={item.url_media}
+        title={item.titulo || "Trabajo"}
         className={grande ? "admin-media-preview" : "admin-table-video"}
-      >
-        <source src={url} />
-      </video>
+      />
     );
   }
 

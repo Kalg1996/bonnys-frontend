@@ -5,6 +5,7 @@ import {
   mezclarConfiguracion,
   obtenerConfiguracionPublica,
 } from "@/services/configuracionSitioService";
+import { obtenerRedesActivas } from "@/components/socialNetworks";
 
 export default function WhatsAppButton() {
   const [configuracion, setConfiguracion] = useState(null);
@@ -23,49 +24,21 @@ export default function WhatsAppButton() {
   }, []);
 
   const config = mezclarConfiguracion(configuracion);
-  const whatsappHref = `https://wa.me/${config.whatsapp_numero}?text=${encodeURIComponent(
-    config.whatsapp_mensaje_predeterminado
-  )}`;
-  const redes = [
-    {
-      href: whatsappHref,
-      label: "WhatsApp",
-      texto: "WA",
-      className: "social-float-link social-float-whatsapp",
-    },
-    config.facebook_url && {
-      href: config.facebook_url,
-      label: "Facebook",
-      texto: "f",
-      className: "social-float-link social-float-facebook",
-    },
-    config.instagram_url && {
-      href: config.instagram_url,
-      label: "Instagram",
-      texto: "IG",
-      className: "social-float-link social-float-instagram",
-    },
-    config.tiktok_url && {
-      href: config.tiktok_url,
-      label: "TikTok",
-      texto: "TT",
-      className: "social-float-link social-float-tiktok",
-    },
-  ].filter(Boolean);
+  const redes = obtenerRedesActivas(configuracion && config);
 
   return (
     <div className="social-float" aria-label="Redes sociales">
       {redes.map((red) => (
         <a
           href={red.href}
-          className={red.className}
+          className={`social-float-link ${red.className}`}
           target="_blank"
           rel="noreferrer"
           aria-label={red.label}
           title={red.label}
           key={red.label}
         >
-          {red.texto}
+          <red.Icon aria-hidden="true" focusable="false" />
         </a>
       ))}
     </div>

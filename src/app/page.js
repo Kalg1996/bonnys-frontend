@@ -6,6 +6,7 @@ import LocationSection from "@/components/LocationSection";
 import PublicCarousel from "@/components/PublicCarousel";
 import PublicFooter from "@/components/PublicFooter";
 import PublicNavbar from "@/components/PublicNavbar";
+import VideoPlayer from "@/components/VideoPlayer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { buildAssetUrl } from "@/services/api";
 import {
@@ -44,9 +45,11 @@ function MediaModal({ media, onClose }) {
       </button>
       <div className="public-media-modal-content">
         {media.tipo === "VIDEO" ? (
-          <video controls preload="metadata" className="w-100 rounded">
-            <source src={buildAssetUrl(media.url_media)} />
-          </video>
+          <VideoPlayer
+            url={media.url_media}
+            title={media.titulo || "Video de trabajo"}
+            className="w-100 rounded"
+          />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -415,9 +418,12 @@ function TrabajoCard({ trabajo, onClick }) {
     <button type="button" className="instagram-grid-item w-100" onClick={onClick}>
       {trabajo.tipo === "VIDEO" ? (
         <>
-          <video preload="metadata" muted>
-            <source src={buildAssetUrl(trabajo.url_media)} />
-          </video>
+          <VideoPlayer
+            url={trabajo.url_media}
+            title={trabajo.titulo || "Video de trabajo"}
+            muted
+            controls={false}
+          />
           <span className="instagram-grid-badge">Video</span>
         </>
       ) : (

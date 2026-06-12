@@ -3,18 +3,14 @@
 import Link from "next/link";
 import { buildAssetUrl } from "@/services/api";
 import { mezclarConfiguracion } from "@/services/configuracionSitioService";
-
-const redes = [
-  { key: "facebook_url", texto: "Facebook" },
-  { key: "instagram_url", texto: "Instagram" },
-  { key: "tiktok_url", texto: "TikTok" },
-  { key: "youtube_url", texto: "YouTube" },
-];
+import { obtenerRedesActivas } from "@/components/socialNetworks";
 
 export default function PublicFooter({ configuracion }) {
   const config = mezclarConfiguracion(configuracion);
   const year = new Date().getFullYear();
-  const redesActivas = redes.filter((red) => config[red.key]);
+  const redesActivas = obtenerRedesActivas(configuracion, {
+    incluirWhatsapp: false,
+  });
 
   return (
     <footer className="public-footer">
@@ -59,9 +55,13 @@ export default function PublicFooter({ configuracion }) {
                     href={config[red.key]}
                     target="_blank"
                     rel="noreferrer"
-                    className="public-footer-link"
+                    className="public-footer-social-link"
+                    aria-label={red.label}
                   >
-                    {red.texto}
+                    <span className={`public-footer-social-icon ${red.className}`}>
+                      <red.Icon aria-hidden="true" focusable="false" />
+                    </span>
+                    <span>{red.label}</span>
                   </a>
                 ))}
               </div>
