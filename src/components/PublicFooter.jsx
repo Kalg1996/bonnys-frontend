@@ -8,9 +8,7 @@ import { obtenerRedesActivas } from "@/components/socialNetworks";
 export default function PublicFooter({ configuracion }) {
   const config = mezclarConfiguracion(configuracion);
   const year = new Date().getFullYear();
-  const redesActivas = obtenerRedesActivas(configuracion, {
-    incluirWhatsapp: false,
-  });
+  const redesActivas = obtenerRedesActivas(configuracion);
 
   return (
     <footer className="public-footer">
@@ -52,7 +50,7 @@ export default function PublicFooter({ configuracion }) {
                 {redesActivas.map((red) => (
                   <a
                     key={red.key}
-                    href={config[red.key]}
+                    href={red.href}
                     target="_blank"
                     rel="noreferrer"
                     className="public-footer-social-link"
