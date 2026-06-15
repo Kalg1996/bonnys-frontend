@@ -160,7 +160,7 @@ export default function AlmacenamientoPage() {
           <AlertMessage type="danger" message={error} />
 
           <div className="row g-4 mb-4">
-            <div className="col-12 col-xl-8">
+            <div className="col-12">
               <div className="card border-0 shadow-sm h-100">
                 <div className="card-body p-4">
                   <div className="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
@@ -194,7 +194,7 @@ export default function AlmacenamientoPage() {
               </div>
             </div>
 
-            <div className="col-12 col-xl-4">
+            <div className="col-12">
               <div className="card border-0 shadow-sm h-100">
                 <div className="card-body p-4">
                   <h2 className="h5 fw-bold mb-3">Archivos no usados</h2>

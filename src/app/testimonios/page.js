@@ -199,7 +199,7 @@ export default function TestimoniosPage() {
           <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
-            <div className="col-12 col-xl-4">
+            <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-4">
                   <h2 className="h5 fw-bold mb-3">
@@ -322,7 +322,7 @@ export default function TestimoniosPage() {
               </div>
             </div>
 
-            <div className="col-12 col-xl-8">
+            <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-4">
                   <h2 className="h5 fw-bold mb-3">Listado</h2>

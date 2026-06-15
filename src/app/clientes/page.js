@@ -185,7 +185,7 @@ export default function ClientesPage() {
           <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
-            <div className="col-12 col-xl-4">
+            <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-4">
                   <h2 className="h5 fw-bold mb-3">
@@ -310,7 +310,7 @@ export default function ClientesPage() {
               </div>
             </div>
 
-            <div className="col-12 col-xl-8">
+            <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-0">
                   <div className="d-flex align-items-center justify-content-between gap-3 p-4 border-bottom">
