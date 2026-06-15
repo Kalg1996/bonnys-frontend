@@ -131,6 +131,7 @@ export default function DashboardPage() {
     {
       id: "clientes",
       titulo: "Clientes",
+      icono: "👥",
       valor: metricas.clientes.length,
       descripcion: "Clientes registrados",
       ruta: "/clientes",
@@ -138,6 +139,7 @@ export default function DashboardPage() {
     {
       id: "servicios",
       titulo: "Servicios",
+      icono: "✂️",
       valor: metricas.servicios.length,
       descripcion: "Servicios disponibles",
       ruta: "/servicios",
@@ -145,6 +147,7 @@ export default function DashboardPage() {
     {
       id: "productos",
       titulo: "Productos",
+      icono: "🛍️",
       valor: metricas.productos.length,
       descripcion: "Productos registrados",
       ruta: "/productos",
@@ -152,6 +155,7 @@ export default function DashboardPage() {
     {
       id: "citas",
       titulo: "Citas",
+      icono: "📅",
       valor: metricas.citas.length,
       descripcion: "Citas registradas",
       ruta: "/citas",
@@ -159,6 +163,7 @@ export default function DashboardPage() {
     {
       id: "ingresos",
       titulo: "Ingresos",
+      icono: "💰",
       valor: formatoMoneda.format(totalIngresos),
       descripcion: "Ingresos acumulados",
       ruta: "/ingresos",
@@ -166,6 +171,7 @@ export default function DashboardPage() {
     {
       id: "gastos",
       titulo: "Gastos",
+      icono: "💸",
       valor: formatoMoneda.format(totalGastos),
       descripcion: "Gastos acumulados",
       ruta: "/gastos",
@@ -173,6 +179,7 @@ export default function DashboardPage() {
     {
       id: "ganancia",
       titulo: "Ganancia",
+      icono: "📈",
       valor: formatoMoneda.format(ganancia),
       descripcion: "Ingresos menos gastos",
       ruta: "/ingresos",
@@ -221,7 +228,7 @@ export default function DashboardPage() {
                 <div className="card h-100 border-0 shadow-sm metric-card">
                   <div className="card-body d-flex flex-column p-4">
                     <div className="metric-icon d-flex align-items-center justify-content-center fw-bold mb-3">
-                      {tarjeta.titulo.slice(0, 1)}
+                      <span aria-hidden="true">{tarjeta.icono}</span>
                     </div>
                     <p className="text-secondary mb-1">{tarjeta.titulo}</p>
                     <h2 className="h3 fw-bold mb-2">{tarjeta.valor}</h2>

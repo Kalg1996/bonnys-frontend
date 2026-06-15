@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaImage } from "react-icons/fa";
 import AlertMessage from "@/components/AlertMessage";
+import { buildAssetUrl } from "@/services/api";
 import { login } from "@/services/authService";
+import {
+  mezclarConfiguracion,
+  obtenerConfiguracionPublica,
+} from "@/services/configuracionSitioService";
 import { guardarToken, guardarUsuario } from "@/utils/auth";
 
 export default function LoginPage() {
@@ -12,6 +18,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [configuracion, setConfiguracion] = useState(null);
+
+  useEffect(() => {
+    async function cargarConfiguracion() {
+      try {
+        const respuesta = await obtenerConfiguracionPublica();
+        setConfiguracion(respuesta?.data || null);
+      } catch {
+        setConfiguracion(null);
+      }
+    }
+
+    cargarConfiguracion();
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -37,6 +57,9 @@ export default function LoginPage() {
     }
   }
 
+  const config = mezclarConfiguracion(configuracion);
+  const logoUrl = buildAssetUrl(config.logo_url);
+
   return (
     <main className="login-page d-flex align-items-center">
       <section className="container py-5">
@@ -60,9 +83,20 @@ export default function LoginPage() {
             <div className="card border-0 shadow login-card">
               <div className="card-body p-4 p-md-5">
                 <div className="text-center mb-4">
-                  <span className="login-mark d-inline-flex align-items-center justify-content-center mb-3">
-                    B
-                  </span>
+                  <div className="login-logo-wrap mx-auto mb-3">
+                    {logoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={logoUrl}
+                        alt={config.nombre_negocio}
+                        className="login-logo"
+                      />
+                    ) : (
+                      <div className="login-logo-placeholder" aria-label="Logo pendiente de configurar">
+                        <FaImage aria-hidden="true" focusable="false" />
+                      </div>
+                    )}
+                  </div>
                   <h2 className="h3 fw-bold mb-1">Iniciar sesión</h2>
                   <p className="text-secondary mb-0">
                     Ingresa tus credenciales para continuar.
