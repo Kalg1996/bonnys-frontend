@@ -31,6 +31,10 @@ function formatoMoneda(valor) {
   }).format(Number(valor));
 }
 
+function formatoPrecioServicio(precio) {
+  return formatoMoneda(precio) || "Sin precio";
+}
+
 function MediaModal({ media, onClose }) {
   if (!media) return null;
 
@@ -331,10 +335,10 @@ function ServicioCard({ servicio }) {
         <img
           src={buildAssetUrl(servicio.url_foto)}
           alt={servicio.nombre}
-          className="commercial-service-image"
+          className="card-media-img commercial-service-image"
         />
       ) : (
-        <div className="commercial-service-image commercial-service-placeholder">
+        <div className="card-media-placeholder commercial-service-image commercial-service-placeholder">
           {servicio.nombre?.slice(0, 1)}
         </div>
       )}
@@ -349,7 +353,7 @@ function ServicioCard({ servicio }) {
           {servicio.descripcion || "Servicio profesional disponible en Bonnys."}
         </p>
         <p className="fs-5 fw-bold text-primary mb-4">
-          {formatoMoneda(servicio.precio)}
+          {formatoPrecioServicio(servicio.precio)}
         </p>
         <div className="d-flex flex-column flex-sm-row gap-2">
           <Link
@@ -375,10 +379,10 @@ function ProductoCard({ producto }) {
         <img
           src={buildAssetUrl(producto.url_foto)}
           alt={producto.nombre}
-          className="commercial-service-image"
+          className="card-media-img commercial-service-image"
         />
       ) : (
-        <div className="commercial-service-image commercial-service-placeholder">
+        <div className="card-media-placeholder commercial-service-image commercial-service-placeholder">
           {producto.nombre?.slice(0, 1)}
         </div>
       )}
@@ -448,8 +452,13 @@ function PromocionCard({ promo }) {
         <img
           src={buildAssetUrl(promo.url_imagen)}
           alt={promo.titulo}
-          className="premium-promo-image"
+          className="card-media-img premium-promo-image"
         />
+      )}
+      {!promo.url_imagen && (
+        <div className="card-media-placeholder premium-promo-image">
+          {promo.titulo?.slice(0, 1)}
+        </div>
       )}
       <div className="p-4">
         <span className="badge text-bg-primary mb-3">Oferta especial</span>

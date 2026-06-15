@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
@@ -424,7 +425,12 @@ export default function ConfiguracionPage() {
                   <div className="col-12" key={titulo}>
                     <div className="card border-0 shadow-sm">
                       <div className="card-body p-4">
-                        <h2 className="h5 fw-bold mb-3">{titulo}</h2>
+                        <h2 className="h5 fw-bold mb-3 d-inline-flex align-items-center gap-2">
+                          {titulo === "Ubicación" && (
+                            <FaMapMarkerAlt className="location-word-icon" aria-hidden="true" />
+                          )}
+                          {titulo}
+                        </h2>
                         <div className="row g-3">
                           {campos.map(([campo, label]) => (
                             <div className="col-12 col-md-6" key={campo}>

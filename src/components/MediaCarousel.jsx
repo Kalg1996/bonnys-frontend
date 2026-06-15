@@ -35,7 +35,7 @@ export default function MediaCarousel({
       </div>
     ) : (
       <div
-        className="public-card-image media-carousel-single"
+        className="card-media-img public-card-image media-carousel-single"
         style={{ backgroundImage: `url(${resolvedImageUrl})` }}
         role="img"
         aria-label={imageAlt}
@@ -46,7 +46,7 @@ export default function MediaCarousel({
   if (!hasImage && hasVideo) {
     return (
       <div
-        className={`media-carousel-single media-carousel-video p-2 ${
+        className={`card-media-video media-carousel-single media-carousel-video ${
           isDetail ? "detail-media-video" : ""
         }`}
       >
@@ -98,7 +98,7 @@ export default function MediaCarousel({
             </div>
           ) : (
             <div
-              className="public-card-image"
+              className="card-media-img public-card-image"
               style={{ backgroundImage: `url(${resolvedImageUrl})` }}
               role="img"
               aria-label={imageAlt}
@@ -107,7 +107,7 @@ export default function MediaCarousel({
         </div>
         <div className="carousel-item">
           <div
-            className={`media-carousel-video p-2 ${
+            className={`card-media-video media-carousel-video ${
               isDetail ? "detail-media-video" : ""
             }`}
           >

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { buildAssetUrl } from "@/services/api";
 import { mezclarConfiguracion } from "@/services/configuracionSitioService";
 import { obtenerRedesActivas } from "@/components/socialNetworks";
@@ -69,7 +70,10 @@ export default function PublicFooter({ configuracion }) {
           </div>
 
           <div className="col-12 col-lg-3">
-            <h3 className="h6 text-uppercase fw-bold mb-3">Ubicación</h3>
+            <h3 className="h6 text-uppercase fw-bold mb-3 d-inline-flex align-items-center gap-2">
+              <FaMapMarkerAlt className="location-word-icon" aria-hidden="true" />
+              Ubicación
+            </h3>
             <p className="mb-0 text-white-75">{config.direccion}</p>
           </div>
         </div>

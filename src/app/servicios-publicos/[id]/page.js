@@ -15,6 +15,14 @@ const formatoMoneda = new Intl.NumberFormat("es-GT", {
   currency: "GTQ",
 });
 
+function formatoPrecioServicio(precio) {
+  if (precio === null || precio === undefined || precio === "") {
+    return "Sin precio";
+  }
+
+  return formatoMoneda.format(Number(precio));
+}
+
 export default function ServicioPublicoDetallePage() {
   const params = useParams();
   const idServicio = params.id;
@@ -97,7 +105,7 @@ export default function ServicioPublicoDetallePage() {
                 </p>
                 <div className="d-flex flex-wrap gap-3">
                   <span className="badge text-bg-light border">
-                    {formatoMoneda.format(Number(servicio.precio || 0))}
+                    {formatoPrecioServicio(servicio.precio)}
                   </span>
                   <span className="badge text-bg-light border">
                     {servicio.duracion_minutos} min

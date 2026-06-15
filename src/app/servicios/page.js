@@ -42,12 +42,20 @@ function prepararServicio(formulario) {
   return {
     nombre: formulario.nombre,
     descripcion: formulario.descripcion || null,
-    precio: Number(formulario.precio),
+    precio: formulario.precio === "" ? null : Number(formulario.precio),
     duracion_minutos: Number(formulario.duracion_minutos),
     estado: formulario.estado === "true",
     url_foto: formulario.url_foto || null,
     url_video: formulario.url_video || null,
   };
+}
+
+function formatoPrecioServicio(precio) {
+  if (precio === null || precio === undefined || precio === "") {
+    return "Sin precio";
+  }
+
+  return `Q ${Number(precio).toFixed(2)}`;
 }
 
 export default function ServiciosPage() {
@@ -400,7 +408,6 @@ export default function ServiciosPage() {
                           className="form-control"
                           value={formulario.precio}
                           onChange={handleChange}
-                          required
                         />
                       </div>
 
@@ -610,7 +617,7 @@ export default function ServiciosPage() {
                                     </small>
                                   )}
                                 </td>
-                                <td>Q {Number(servicio.precio).toFixed(2)}</td>
+                                <td>{formatoPrecioServicio(servicio.precio)}</td>
                                 <td>{servicio.duracion_minutos} min</td>
                                 <td>
                                   <span

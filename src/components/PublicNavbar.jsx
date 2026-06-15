@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import Link from "next/link";
+import { FaHome } from "react-icons/fa";
 import { buildAssetUrl } from "@/services/api";
 import {
   mezclarConfiguracion,
@@ -10,7 +11,7 @@ import {
 } from "@/services/configuracionSitioService";
 
 const enlaces = [
-  { texto: "Inicio", ruta: "/" },
+  { texto: "Inicio", ruta: "/", icono: FaHome },
   { texto: "Servicios", ruta: "/servicios-publicos" },
   { texto: "Productos", ruta: "/productos-publicos" },
   { texto: "Galería", ruta: "/#galeria" },
@@ -67,16 +68,24 @@ export default function PublicNavbar() {
         </button>
         <div className="collapse navbar-collapse" id="publicNavbar">
           <div className="navbar-nav ms-auto gap-lg-2 align-items-lg-center">
-            {enlaces.map((enlace) => (
-              <Link href={enlace.ruta} className="nav-link" key={enlace.ruta}>
-                {enlace.texto}
-              </Link>
-            ))}
-            <div className="d-flex flex-column flex-lg-row gap-2 ms-lg-2 mt-3 mt-lg-0">
-              <Link href="/agendar-cita" className="btn btn-bonnys-primary btn-sm">
-                Agendar cita
-              </Link>
-            </div>
+            {enlaces.map((enlace) => {
+              const Icono = enlace.icono;
+
+              return (
+                <Link
+                  href={enlace.ruta}
+                  className={`nav-link ${Icono ? "public-navbar-home-link" : ""}`}
+                  aria-label={Icono ? enlace.texto : undefined}
+                  title={Icono ? enlace.texto : undefined}
+                  key={enlace.ruta}
+                >
+                  {Icono ? <Icono aria-hidden="true" focusable="false" /> : enlace.texto}
+                </Link>
+              );
+            })}
+            <Link href="/agendar-cita" className="nav-link">
+              Agendar cita
+            </Link>
           </div>
         </div>
       </div>
