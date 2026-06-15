@@ -20,6 +20,7 @@ const formularioInicial = {
   telefono2: "",
   correo: "",
   direccion: "",
+  fecha_nacimiento: "",
   id_servicio: "",
   fecha_cita: "",
   hora_inicio: "",
@@ -370,6 +371,21 @@ export default function AgendarCitaPage() {
                         className="form-control"
                         value={formulario.correo}
                         onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-6">
+                      <label htmlFor="fecha_nacimiento" className="form-label">
+                        Fecha de nacimiento
+                      </label>
+                      <input
+                        id="fecha_nacimiento"
+                        name="fecha_nacimiento"
+                        type="date"
+                        className="form-control"
+                        value={formulario.fecha_nacimiento}
+                        onChange={handleChange}
+                        max={obtenerFechaHoy()}
                       />
                     </div>
 

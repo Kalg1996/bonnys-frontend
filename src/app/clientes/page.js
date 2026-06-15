@@ -27,7 +27,31 @@ const formularioInicial = {
   telefono2: "",
   correo: "",
   direccion: "",
+  fecha_nacimiento: "",
 };
+
+function normalizarFechaInput(fecha) {
+  return fecha ? String(fecha).slice(0, 10) : "";
+}
+
+function mostrarFecha(fecha) {
+  const fechaNormalizada = normalizarFechaInput(fecha);
+
+  if (!fechaNormalizada) return "-";
+
+  const [year, month, day] = fechaNormalizada.split("-");
+
+  return `${day}/${month}/${year}`;
+}
+
+function obtenerFechaHoy() {
+  const hoy = new Date();
+  const year = hoy.getFullYear();
+  const month = String(hoy.getMonth() + 1).padStart(2, "0");
+  const day = String(hoy.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 export default function ClientesPage() {
   const router = useRouter();
@@ -115,6 +139,7 @@ export default function ClientesPage() {
       telefono2: cliente.telefono2 || "",
       correo: cliente.correo || "",
       direccion: cliente.direccion || "",
+      fecha_nacimiento: normalizarFechaInput(cliente.fecha_nacimiento),
     });
     setMensaje("");
     setError("");
@@ -280,6 +305,21 @@ export default function ClientesPage() {
                       />
                     </div>
 
+                    <div className="mb-3">
+                      <label htmlFor="fecha_nacimiento" className="form-label">
+                        Fecha de nacimiento
+                      </label>
+                      <input
+                        id="fecha_nacimiento"
+                        name="fecha_nacimiento"
+                        type="date"
+                        className="form-control"
+                        value={formulario.fecha_nacimiento}
+                        onChange={handleChange}
+                        max={obtenerFechaHoy()}
+                      />
+                    </div>
+
                     <div className="mb-4">
                       <label htmlFor="direccion" className="form-label">
                         Dirección
@@ -352,6 +392,7 @@ export default function ClientesPage() {
                             <th>Nombre</th>
                             <th>Teléfono</th>
                             <th>Correo</th>
+                            <th>Fecha nacimiento</th>
                             <th>Dirección</th>
                             <th className="text-end">Acciones</th>
                           </tr>
@@ -359,7 +400,7 @@ export default function ClientesPage() {
                         <tbody>
                           {clientes.length === 0 ? (
                             <tr>
-                              <td colSpan="5" className="text-center text-secondary py-4">
+                              <td colSpan="6" className="text-center text-secondary py-4">
                                 No hay clientes registrados.
                               </td>
                             </tr>
@@ -380,6 +421,7 @@ export default function ClientesPage() {
                                   )}
                                 </td>
                                 <td>{cliente.correo || "-"}</td>
+                                <td>{mostrarFecha(cliente.fecha_nacimiento)}</td>
                                 <td>{cliente.direccion || "-"}</td>
                                 <td>
                                   <div className="d-flex justify-content-end gap-2">
