@@ -16,6 +16,13 @@ export async function obtenerClientes() {
   });
 }
 
+export async function obtenerCumpleaniosProximos() {
+  return apiFetch("/clientes/cumpleanios/proximos", {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+}
+
 export async function obtenerClientePorId(id) {
   return apiFetch(`/clientes/${id}`, {
     method: "GET",
@@ -48,6 +55,7 @@ export async function eliminarCliente(id) {
 
 const clienteService = {
   obtenerClientes,
+  obtenerCumpleaniosProximos,
   obtenerClientePorId,
   crearCliente,
   actualizarCliente,

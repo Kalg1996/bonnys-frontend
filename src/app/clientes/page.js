@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AlertMessage from "@/components/AlertMessage";
 import Navbar from "@/components/Navbar";
@@ -10,6 +10,7 @@ import {
   crearCliente,
   eliminarCliente,
   obtenerClientes,
+  obtenerCumpleaniosProximos,
 } from "@/services/clienteService";
 import {
   cerrarSesion,
@@ -53,14 +54,34 @@ function obtenerFechaHoy() {
   return `${year}-${month}-${day}`;
 }
 
+function obtenerTextoBadgeCumpleanios(diasRestantes) {
+  if (diasRestantes === 0) return "Hoy";
+  if (diasRestantes === 1) return "Mañana";
+  return "En 2 días";
+}
+
+function obtenerClaseBadgeCumpleanios(diasRestantes) {
+  return diasRestantes === 0 ? "text-bg-success" : "text-bg-secondary";
+}
+
+function crearLinkWhatsApp(cliente) {
+  const telefono = String(cliente.telefono1 || "").replace(/\D/g, "");
+  const nombre = cliente.nombre || "cliente";
+  const mensaje = `Hola ${nombre}, feliz cumpleaños 🎉 De parte de nuestro salón te deseamos un día muy especial.`;
+
+  return `https://wa.me/502${telefono}?text=${encodeURIComponent(mensaje)}`;
+}
+
 export default function ClientesPage() {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
   const [clientes, setClientes] = useState([]);
+  const [cumpleaniosProximos, setCumpleaniosProximos] = useState([]);
   const [formulario, setFormulario] = useState(formularioInicial);
   const [clienteEditando, setClienteEditando] = useState(null);
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [cargandoClientes, setCargandoClientes] = useState(false);
+  const [cargandoCumpleanios, setCargandoCumpleanios] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [eliminandoId, setEliminandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
@@ -71,13 +92,13 @@ export default function ClientesPage() {
     toastSuccess(mensajeExito);
   }
 
-  function mostrarError(err, fallback) {
+  const mostrarError = useCallback((err, fallback) => {
     const mensajeError = getErrorMessage(err, fallback);
     setError(mensajeError);
     toastError(mensajeError);
-  }
+  }, []);
 
-  async function cargarClientes() {
+  const cargarClientes = useCallback(async () => {
     setCargandoClientes(true);
     setError("");
 
@@ -89,7 +110,21 @@ export default function ClientesPage() {
     } finally {
       setCargandoClientes(false);
     }
-  }
+  }, [mostrarError]);
+
+  const cargarCumpleaniosProximos = useCallback(async () => {
+    setCargandoCumpleanios(true);
+    setError("");
+
+    try {
+      const respuesta = await obtenerCumpleaniosProximos();
+      setCumpleaniosProximos(respuesta?.data || []);
+    } catch (err) {
+      mostrarError(err, "No se pudieron cargar los cumpleaños próximos.");
+    } finally {
+      setCargandoCumpleanios(false);
+    }
+  }, [mostrarError]);
 
   useEffect(() => {
     const verificarSesion = window.setTimeout(() => {
@@ -103,10 +138,11 @@ export default function ClientesPage() {
       setUsuario(obtenerUsuario());
       setCargandoSesion(false);
       cargarClientes();
+      cargarCumpleaniosProximos();
     }, 0);
 
     return () => window.clearTimeout(verificarSesion);
-  }, [router]);
+  }, [router, cargarClientes, cargarCumpleaniosProximos]);
 
   function handleCerrarSesion() {
     cerrarSesion();
@@ -161,7 +197,7 @@ export default function ClientesPage() {
       }
 
       limpiarFormulario();
-      await cargarClientes();
+      await Promise.all([cargarClientes(), cargarCumpleaniosProximos()]);
     } catch (err) {
       mostrarError(err, "No se pudo guardar el cliente.");
     } finally {
@@ -183,7 +219,7 @@ export default function ClientesPage() {
     try {
       await eliminarCliente(cliente.id_cliente);
       mostrarExito("Cliente eliminado correctamente.");
-      await cargarClientes();
+      await Promise.all([cargarClientes(), cargarCumpleaniosProximos()]);
     } catch (err) {
       mostrarError(err, "No se pudo eliminar el cliente.");
     } finally {
@@ -223,6 +259,77 @@ export default function ClientesPage() {
           <AlertMessage type="danger" message={error} />
 
           <div className="row g-4">
+            <div className="col-12">
+              <div className="card border-0 shadow-sm">
+                <div className="card-body p-4">
+                  <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
+                    <div>
+                      <h2 className="h5 fw-bold mb-1">Cumpleaños próximos</h2>
+                      <p className="text-secondary mb-0">
+                        Clientes que cumplen años entre hoy y los próximos 2 días.
+                      </p>
+                    </div>
+                  </div>
+
+                  {cargandoCumpleanios ? (
+                    <div className="py-4 text-center">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                      </div>
+                    </div>
+                  ) : cumpleaniosProximos.length === 0 ? (
+                    <div className="border rounded-3 bg-light p-4 text-center text-secondary">
+                      No hay cumpleaños en los próximos 3 días.
+                    </div>
+                  ) : (
+                    <div className="row g-3">
+                      {cumpleaniosProximos.map((cliente) => (
+                        <div className="col-12 col-lg-6" key={cliente.id_cliente}>
+                          <div className="border rounded-3 p-3 h-100">
+                            <div className="d-flex flex-column flex-sm-row justify-content-between gap-2 mb-2">
+                              <div>
+                                <div className="fw-semibold">
+                                  {cliente.nombre} {cliente.apellido}
+                                </div>
+                                <div className="small text-secondary">
+                                  {mostrarFecha(cliente.fecha_nacimiento)}
+                                </div>
+                              </div>
+                              <div>
+                                <span
+                                  className={`badge ${obtenerClaseBadgeCumpleanios(
+                                    cliente.dias_restantes
+                                  )}`}
+                                >
+                                  {obtenerTextoBadgeCumpleanios(cliente.dias_restantes)}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="small text-secondary mb-3">
+                              <div>Teléfono: {cliente.telefono1 || "-"}</div>
+                              {cliente.correo && <div>Correo: {cliente.correo}</div>}
+                            </div>
+
+                            {cliente.dias_restantes === 0 && cliente.telefono1 && (
+                              <a
+                                className="btn btn-success btn-sm"
+                                href={crearLinkWhatsApp(cliente)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Felicitar
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-4">
