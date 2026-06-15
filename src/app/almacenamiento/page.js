@@ -11,6 +11,8 @@ import {
   obtenerResumenAlmacenamiento,
 } from "@/services/almacenamientoService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const estadoConfig = {
   NORMAL: {
@@ -50,6 +52,17 @@ export default function AlmacenamientoPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarAlmacenamiento() {
     setCargando(true);
     setError("");
@@ -63,7 +76,7 @@ export default function AlmacenamientoPage() {
       setResumen(respuestaResumen?.data || null);
       setArchivosNoUsados(respuestaArchivos?.data || null);
     } catch (err) {
-      setError(err.message || "No se pudo cargar el almacenamiento.");
+      mostrarError(err, "No se pudo cargar el almacenamiento.");
     } finally {
       setCargando(false);
     }
@@ -105,12 +118,14 @@ export default function AlmacenamientoPage() {
     try {
       const respuesta = await eliminarArchivosNoUsados();
       const data = respuesta?.data;
-      setMensaje(
-        `Se eliminaron ${data?.eliminados || 0} archivos y se liberaron ${data?.espacioLiberadoMb || 0} MB.`
+      mostrarExito(
+        `Se eliminaron ${data?.eliminados || 0} archivos y se liberaron ${
+          data?.espacioLiberadoMb || 0
+        } MB.`
       );
       await cargarAlmacenamiento();
     } catch (err) {
-      setError(err.message || "No se pudieron eliminar los archivos no usados.");
+      mostrarError(err, "No se pudieron eliminar los archivos no usados.");
     } finally {
       setEliminando(false);
     }

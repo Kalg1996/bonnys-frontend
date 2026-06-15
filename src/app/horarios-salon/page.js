@@ -14,6 +14,8 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 function normalizarHora(hora) {
   return hora ? String(hora).slice(0, 5) : "";
@@ -28,6 +30,17 @@ export default function HorariosSalonPage() {
   const [guardandoId, setGuardandoId] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
+
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
 
   async function cargarHorarios() {
     setCargandoHorarios(true);
@@ -44,7 +57,7 @@ export default function HorariosSalonPage() {
         }))
       );
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los horarios.");
+      mostrarError(err, "No se pudieron cargar los horarios.");
     } finally {
       setCargandoHorarios(false);
     }
@@ -93,10 +106,10 @@ export default function HorariosSalonPage() {
         hora_fin: horario.hora_fin,
         activo: horario.activo,
       });
-      setMensaje(`Horario de ${horario.dia_semana} actualizado correctamente.`);
+      mostrarExito(`Horario de ${horario.dia_semana} actualizado correctamente.`);
       await cargarHorarios();
     } catch (err) {
-      setError(err.message || "No se pudo actualizar el horario.");
+      mostrarError(err, "No se pudo actualizar el horario.");
     } finally {
       setGuardandoId(null);
     }

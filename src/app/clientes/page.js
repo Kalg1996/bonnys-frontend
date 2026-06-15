@@ -16,7 +16,9 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   nombre: "",
@@ -40,6 +42,17 @@ export default function ClientesPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarClientes() {
     setCargandoClientes(true);
     setError("");
@@ -48,7 +61,7 @@ export default function ClientesPage() {
       const respuesta = await obtenerClientes();
       setClientes(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los clientes.");
+      mostrarError(err, "No se pudieron cargar los clientes.");
     } finally {
       setCargandoClientes(false);
     }
@@ -116,16 +129,16 @@ export default function ClientesPage() {
     try {
       if (clienteEditando) {
         await actualizarCliente(clienteEditando.id_cliente, formulario);
-        setMensaje("Cliente actualizado correctamente.");
+        mostrarExito("Cliente actualizado correctamente.");
       } else {
         await crearCliente(formulario);
-        setMensaje("Cliente creado correctamente.");
+        mostrarExito("Cliente creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarClientes();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el cliente.");
+      mostrarError(err, "No se pudo guardar el cliente.");
     } finally {
       setGuardando(false);
     }
@@ -144,10 +157,10 @@ export default function ClientesPage() {
 
     try {
       await eliminarCliente(cliente.id_cliente);
-      setMensaje("Cliente eliminado correctamente.");
+      mostrarExito("Cliente eliminado correctamente.");
       await cargarClientes();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el cliente.");
+      mostrarError(err, "No se pudo eliminar el cliente.");
     } finally {
       setEliminandoId(null);
     }

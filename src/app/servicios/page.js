@@ -26,7 +26,9 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   nombre: "",
@@ -77,6 +79,17 @@ export default function ServiciosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarServicios() {
     setCargandoServicios(true);
     setError("");
@@ -85,7 +98,7 @@ export default function ServiciosPage() {
       const respuesta = await obtenerServicios();
       setServicios(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los servicios.");
+      mostrarError(err, "No se pudieron cargar los servicios.");
     } finally {
       setCargandoServicios(false);
     }
@@ -140,9 +153,9 @@ export default function ServiciosPage() {
         ...prevFormulario,
         url_foto: respuesta?.data?.url || "",
       }));
-      setMensaje("Imagen de servicio subida correctamente.");
+      mostrarExito("Imagen de servicio subida correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir la imagen.");
+      mostrarError(err, "No se pudo subir la imagen.");
     } finally {
       setSubiendoArchivo("");
       event.target.value = "";
@@ -163,9 +176,9 @@ export default function ServiciosPage() {
         ...prevFormulario,
         url_video: respuesta?.data?.url || "",
       }));
-      setMensaje("Video de servicio subido correctamente.");
+      mostrarExito("Video de servicio subido correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir el video.");
+      mostrarError(err, "No se pudo subir el video.");
     } finally {
       setSubiendoArchivo("");
       event.target.value = "";
@@ -182,7 +195,7 @@ export default function ServiciosPage() {
       const respuesta = await obtenerGaleriaServicio(servicio.id_servicio);
       setGaleria(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudo cargar la galería.");
+      mostrarError(err, "No se pudo cargar la galería.");
     } finally {
       setCargandoGaleria(false);
     }
@@ -203,10 +216,10 @@ export default function ServiciosPage() {
         url: upload?.data?.url,
         orden: galeria.length,
       });
-      setMensaje("Imagen agregada a la galería.");
+      mostrarExito("Imagen agregada a la galería.");
       await abrirGaleria(servicioGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo agregar la imagen a la galería.");
+      mostrarError(err, "No se pudo agregar la imagen a la galería.");
     } finally {
       setSubiendoGaleria("");
       event.target.value = "";
@@ -228,10 +241,10 @@ export default function ServiciosPage() {
         url: upload?.data?.url,
         orden: galeria.length,
       });
-      setMensaje("Video agregado a la galería.");
+      mostrarExito("Video agregado a la galería.");
       await abrirGaleria(servicioGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo agregar el video a la galería.");
+      mostrarError(err, "No se pudo agregar el video a la galería.");
     } finally {
       setSubiendoGaleria("");
       event.target.value = "";
@@ -251,10 +264,10 @@ export default function ServiciosPage() {
 
     try {
       await eliminarMediaServicio(idMedia);
-      setMensaje("Elemento eliminado de la galería.");
+      mostrarExito("Elemento eliminado de la galería.");
       await abrirGaleria(servicioGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el elemento.");
+      mostrarError(err, "No se pudo eliminar el elemento.");
     } finally {
       setEliminandoMediaId(null);
     }
@@ -291,16 +304,16 @@ export default function ServiciosPage() {
 
       if (servicioEditando) {
         await actualizarServicio(servicioEditando.id_servicio, datosServicio);
-        setMensaje("Servicio actualizado correctamente.");
+        mostrarExito("Servicio actualizado correctamente.");
       } else {
         await crearServicio(datosServicio);
-        setMensaje("Servicio creado correctamente.");
+        mostrarExito("Servicio creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarServicios();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el servicio.");
+      mostrarError(err, "No se pudo guardar el servicio.");
     } finally {
       setGuardando(false);
     }
@@ -319,10 +332,10 @@ export default function ServiciosPage() {
 
     try {
       await eliminarServicio(servicio.id_servicio);
-      setMensaje("Servicio eliminado correctamente.");
+      mostrarExito("Servicio eliminado correctamente.");
       await cargarServicios();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el servicio.");
+      mostrarError(err, "No se pudo eliminar el servicio.");
     } finally {
       setEliminandoId(null);
     }

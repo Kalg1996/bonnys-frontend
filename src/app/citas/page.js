@@ -19,6 +19,8 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const estados = ["PENDIENTE", "CONFIRMADA", "FINALIZADA", "CANCELADA"];
 
@@ -130,6 +132,17 @@ export default function CitasPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarDatos() {
     setCargandoDatos(true);
     setError("");
@@ -148,7 +161,7 @@ export default function CitasPage() {
       setUsuarios(usuariosResp?.data || []);
       setServicios(serviciosResp?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los datos de citas.");
+      mostrarError(err, "No se pudieron cargar los datos de citas.");
     } finally {
       setCargandoDatos(false);
     }
@@ -217,16 +230,16 @@ export default function CitasPage() {
 
       if (citaEditando) {
         await actualizarCita(citaEditando.id_cita, datosCita);
-        setMensaje("Cita actualizada correctamente.");
+        mostrarExito("Cita actualizada correctamente.");
       } else {
         await crearCita(datosCita);
-        setMensaje("Cita creada correctamente.");
+        mostrarExito("Cita registrada correctamente.");
       }
 
       limpiarFormulario();
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo guardar la cita.");
+      mostrarError(err, "No se pudo guardar la cita.");
     } finally {
       setGuardando(false);
     }
@@ -245,10 +258,10 @@ export default function CitasPage() {
 
     try {
       await eliminarCita(cita.id_cita);
-      setMensaje("Cita eliminada correctamente.");
+      mostrarExito("Cita eliminada correctamente.");
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar la cita.");
+      mostrarError(err, "No se pudo eliminar la cita.");
     } finally {
       setEliminandoId(null);
     }

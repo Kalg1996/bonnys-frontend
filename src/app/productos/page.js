@@ -26,7 +26,9 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   nombre: "",
@@ -75,6 +77,17 @@ export default function ProductosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarProductos() {
     setCargandoProductos(true);
     setError("");
@@ -83,7 +96,7 @@ export default function ProductosPage() {
       const respuesta = await obtenerProductos();
       setProductos(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los productos.");
+      mostrarError(err, "No se pudieron cargar los productos.");
     } finally {
       setCargandoProductos(false);
     }
@@ -138,9 +151,9 @@ export default function ProductosPage() {
         ...prevFormulario,
         url_foto: respuesta?.data?.url || "",
       }));
-      setMensaje("Imagen de producto subida correctamente.");
+      mostrarExito("Imagen de producto subida correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir la imagen.");
+      mostrarError(err, "No se pudo subir la imagen.");
     } finally {
       setSubiendoArchivo("");
       event.target.value = "";
@@ -161,9 +174,9 @@ export default function ProductosPage() {
         ...prevFormulario,
         url_video: respuesta?.data?.url || "",
       }));
-      setMensaje("Video de producto subido correctamente.");
+      mostrarExito("Video de producto subido correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir el video.");
+      mostrarError(err, "No se pudo subir el video.");
     } finally {
       setSubiendoArchivo("");
       event.target.value = "";
@@ -180,7 +193,7 @@ export default function ProductosPage() {
       const respuesta = await obtenerGaleriaProducto(producto.id_producto);
       setGaleria(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudo cargar la galería.");
+      mostrarError(err, "No se pudo cargar la galería.");
     } finally {
       setCargandoGaleria(false);
     }
@@ -201,10 +214,10 @@ export default function ProductosPage() {
         url: upload?.data?.url,
         orden: galeria.length,
       });
-      setMensaje("Imagen agregada a la galería.");
+      mostrarExito("Imagen agregada a la galería.");
       await abrirGaleria(productoGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo agregar la imagen a la galería.");
+      mostrarError(err, "No se pudo agregar la imagen a la galería.");
     } finally {
       setSubiendoGaleria("");
       event.target.value = "";
@@ -226,10 +239,10 @@ export default function ProductosPage() {
         url: upload?.data?.url,
         orden: galeria.length,
       });
-      setMensaje("Video agregado a la galería.");
+      mostrarExito("Video agregado a la galería.");
       await abrirGaleria(productoGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo agregar el video a la galería.");
+      mostrarError(err, "No se pudo agregar el video a la galería.");
     } finally {
       setSubiendoGaleria("");
       event.target.value = "";
@@ -249,10 +262,10 @@ export default function ProductosPage() {
 
     try {
       await eliminarMediaProducto(idMedia);
-      setMensaje("Elemento eliminado de la galería.");
+      mostrarExito("Elemento eliminado de la galería.");
       await abrirGaleria(productoGaleria);
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el elemento.");
+      mostrarError(err, "No se pudo eliminar el elemento.");
     } finally {
       setEliminandoMediaId(null);
     }
@@ -290,16 +303,16 @@ export default function ProductosPage() {
 
       if (productoEditando) {
         await actualizarProducto(productoEditando.id_producto, datosProducto);
-        setMensaje("Producto actualizado correctamente.");
+        mostrarExito("Producto actualizado correctamente.");
       } else {
         await crearProducto(datosProducto);
-        setMensaje("Producto creado correctamente.");
+        mostrarExito("Producto creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarProductos();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el producto.");
+      mostrarError(err, "No se pudo guardar el producto.");
     } finally {
       setGuardando(false);
     }
@@ -318,10 +331,10 @@ export default function ProductosPage() {
 
     try {
       await eliminarProducto(producto.id_producto);
-      setMensaje("Producto eliminado correctamente.");
+      mostrarExito("Producto eliminado correctamente.");
       await cargarProductos();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el producto.");
+      mostrarError(err, "No se pudo eliminar el producto.");
     } finally {
       setEliminandoId(null);
     }

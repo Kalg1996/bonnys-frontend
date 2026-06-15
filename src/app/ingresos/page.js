@@ -18,7 +18,9 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const tiposIngreso = ["SERVICIO", "PRODUCTO", "OTRO"];
 const metodosPago = ["EFECTIVO", "TARJETA", "TRANSFERENCIA", "OTRO"];
@@ -81,6 +83,17 @@ export default function IngresosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarDatos() {
     setCargandoDatos(true);
     setError("");
@@ -96,7 +109,7 @@ export default function IngresosPage() {
       setClientes(clientesResp?.data || []);
       setUsuarios(usuariosResp?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los ingresos.");
+      mostrarError(err, "No se pudieron cargar los ingresos.");
     } finally {
       setCargandoDatos(false);
     }
@@ -168,16 +181,16 @@ export default function IngresosPage() {
 
       if (ingresoEditando) {
         await actualizarIngreso(ingresoEditando.id_ingreso, datosIngreso);
-        setMensaje("Ingreso actualizado correctamente.");
+        mostrarExito("Ingreso actualizado correctamente.");
       } else {
         await crearIngreso(datosIngreso);
-        setMensaje("Ingreso creado correctamente.");
+        mostrarExito("Ingreso creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el ingreso.");
+      mostrarError(err, "No se pudo guardar el ingreso.");
     } finally {
       setGuardando(false);
     }
@@ -196,10 +209,10 @@ export default function IngresosPage() {
 
     try {
       await eliminarIngreso(ingreso.id_ingreso);
-      setMensaje("Ingreso eliminado correctamente.");
+      mostrarExito("Ingreso eliminado correctamente.");
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el ingreso.");
+      mostrarError(err, "No se pudo eliminar el ingreso.");
     } finally {
       setEliminandoId(null);
     }

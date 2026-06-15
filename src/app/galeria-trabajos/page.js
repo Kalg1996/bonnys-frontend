@@ -15,6 +15,8 @@ import {
 } from "@/services/galeriaTrabajoService";
 import { subirMediaGaleriaTrabajo } from "@/services/uploadService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   titulo: "",
@@ -64,6 +66,17 @@ export default function GaleriaTrabajosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarRegistros() {
     setCargando(true);
     setError("");
@@ -72,7 +85,7 @@ export default function GaleriaTrabajosPage() {
       const respuesta = await obtenerGaleriaTrabajos();
       setRegistros(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudo cargar la galería de trabajos.");
+      mostrarError(err, "No se pudo cargar la galería de trabajos.");
     } finally {
       setCargando(false);
     }
@@ -138,9 +151,9 @@ export default function GaleriaTrabajosPage() {
         tipo,
         url_media: respuesta?.data?.url || "",
       }));
-      setMensaje("Archivo subido correctamente.");
+      mostrarExito("Archivo subido correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir el archivo.");
+      mostrarError(err, "No se pudo subir el archivo.");
     } finally {
       setSubiendo(false);
       event.target.value = "";
@@ -156,16 +169,16 @@ export default function GaleriaTrabajosPage() {
     try {
       if (editando) {
         await actualizarGaleriaTrabajo(editando.id_trabajo, formulario);
-        setMensaje("Trabajo actualizado correctamente.");
+        mostrarExito("Trabajo actualizado correctamente.");
       } else {
         await crearGaleriaTrabajo(formulario);
-        setMensaje("Trabajo creado correctamente.");
+        mostrarExito("Trabajo creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el trabajo.");
+      mostrarError(err, "No se pudo guardar el trabajo.");
     } finally {
       setGuardando(false);
     }
@@ -184,10 +197,10 @@ export default function GaleriaTrabajosPage() {
 
     try {
       await eliminarGaleriaTrabajo(registro.id_trabajo);
-      setMensaje("Trabajo eliminado correctamente.");
+      mostrarExito("Trabajo eliminado correctamente.");
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el trabajo.");
+      mostrarError(err, "No se pudo eliminar el trabajo.");
     } finally {
       setEliminandoId(null);
     }

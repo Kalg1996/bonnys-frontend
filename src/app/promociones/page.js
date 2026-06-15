@@ -14,7 +14,9 @@ import {
 } from "@/services/promocionService";
 import { subirImagenPromocion } from "@/services/uploadService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   titulo: "",
@@ -54,6 +56,17 @@ export default function PromocionesPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarRegistros() {
     setCargando(true);
     setError("");
@@ -62,7 +75,7 @@ export default function PromocionesPage() {
       const respuesta = await obtenerPromociones();
       setRegistros(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar las promociones.");
+      mostrarError(err, "No se pudieron cargar las promociones.");
     } finally {
       setCargando(false);
     }
@@ -131,9 +144,9 @@ export default function PromocionesPage() {
         ...prev,
         url_imagen: respuesta?.data?.url || "",
       }));
-      setMensaje("Imagen subida correctamente.");
+      mostrarExito("Imagen subida correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir la imagen.");
+      mostrarError(err, "No se pudo subir la imagen.");
     } finally {
       setSubiendo(false);
       event.target.value = "";
@@ -149,16 +162,16 @@ export default function PromocionesPage() {
     try {
       if (editando) {
         await actualizarPromocion(editando.id_promocion, formulario);
-        setMensaje("Promoción actualizada correctamente.");
+        mostrarExito("Promoción actualizada correctamente.");
       } else {
         await crearPromocion(formulario);
-        setMensaje("Promoción creada correctamente.");
+        mostrarExito("Promoción creada correctamente.");
       }
 
       limpiarFormulario();
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo guardar la promoción.");
+      mostrarError(err, "No se pudo guardar la promoción.");
     } finally {
       setGuardando(false);
     }
@@ -177,10 +190,10 @@ export default function PromocionesPage() {
 
     try {
       await eliminarPromocion(registro.id_promocion);
-      setMensaje("Promoción eliminada correctamente.");
+      mostrarExito("Promoción eliminada correctamente.");
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar la promoción.");
+      mostrarError(err, "No se pudo eliminar la promoción.");
     } finally {
       setEliminandoId(null);
     }

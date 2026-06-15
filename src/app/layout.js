@@ -3,6 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 import DynamicFavicon from "@/components/DynamicFavicon";
 import SiteTheme from "@/components/SiteTheme";
+import ToastViewport from "@/components/ToastViewport";
 
 export const metadata = {
   title: "Bonnys",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
       <body>
         <SiteTheme />
         <DynamicFavicon />
+        <ToastViewport />
         {children}
       </body>
     </html>

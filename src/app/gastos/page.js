@@ -17,7 +17,9 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const categorias = ["RENTA", "LUZ", "AGUA", "PRODUCTOS", "PUBLICIDAD", "OTRO"];
 const metodosPago = ["EFECTIVO", "TARJETA", "TRANSFERENCIA", "OTRO"];
@@ -73,6 +75,17 @@ export default function GastosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarDatos() {
     setCargandoDatos(true);
     setError("");
@@ -86,7 +99,7 @@ export default function GastosPage() {
       setGastos(gastosResp?.data || []);
       setUsuarios(usuariosResp?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los gastos.");
+      mostrarError(err, "No se pudieron cargar los gastos.");
     } finally {
       setCargandoDatos(false);
     }
@@ -157,16 +170,16 @@ export default function GastosPage() {
 
       if (gastoEditando) {
         await actualizarGasto(gastoEditando.id_gasto, datosGasto);
-        setMensaje("Gasto actualizado correctamente.");
+        mostrarExito("Gasto actualizado correctamente.");
       } else {
         await crearGasto(datosGasto);
-        setMensaje("Gasto creado correctamente.");
+        mostrarExito("Gasto creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el gasto.");
+      mostrarError(err, "No se pudo guardar el gasto.");
     } finally {
       setGuardando(false);
     }
@@ -185,10 +198,10 @@ export default function GastosPage() {
 
     try {
       await eliminarGasto(gasto.id_gasto);
-      setMensaje("Gasto eliminado correctamente.");
+      mostrarExito("Gasto eliminado correctamente.");
       await cargarDatos();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el gasto.");
+      mostrarError(err, "No se pudo eliminar el gasto.");
     } finally {
       setEliminandoId(null);
     }

@@ -23,6 +23,8 @@ import {
   obtenerToken,
   obtenerUsuario,
 } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const CAMPOS_TEXTO = [
   ["telefono_principal", "Teléfono principal"],
@@ -53,6 +55,17 @@ export default function ConfiguracionPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarConfiguracion() {
     setCargando(true);
     setError("");
@@ -64,7 +77,7 @@ export default function ConfiguracionPage() {
         ...(respuesta?.data || {}),
       });
     } catch (err) {
-      setError(err.message || "No se pudo cargar la configuración.");
+      mostrarError(err, "No se pudo cargar la configuración.");
     } finally {
       setCargando(false);
     }
@@ -120,9 +133,9 @@ export default function ConfiguracionPage() {
         ...prevConfiguracion,
         [tipo]: respuesta?.data?.url || "",
       }));
-      setMensaje("Archivo subido correctamente. Guarda los cambios para aplicarlo.");
+      mostrarExito("Archivo subido correctamente. Guarda los cambios para aplicarlo.");
     } catch (err) {
-      setError(err.message || "No se pudo subir el archivo.");
+      mostrarError(err, "No se pudo subir el archivo.");
     } finally {
       setSubiendo("");
     }
@@ -146,9 +159,9 @@ export default function ConfiguracionPage() {
           detail: configuracionActualizada,
         })
       );
-      setMensaje("Configuración actualizada correctamente.");
+      mostrarExito("Configuración actualizada correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo guardar la configuración.");
+      mostrarError(err, "No se pudo guardar la configuración.");
     } finally {
       setGuardando(false);
     }

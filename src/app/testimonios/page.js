@@ -14,7 +14,9 @@ import {
 } from "@/services/testimonioService";
 import { subirFotoTestimonio } from "@/services/uploadService";
 import { cerrarSesion, obtenerToken, obtenerUsuario } from "@/utils/auth";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { normalizarCampoNumerico } from "@/utils/numberInput";
+import { toastError, toastSuccess } from "@/utils/toast";
 
 const formularioInicial = {
   nombre_cliente: "",
@@ -38,6 +40,17 @@ export default function TestimoniosPage() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  function mostrarExito(mensajeExito) {
+    setMensaje(mensajeExito);
+    toastSuccess(mensajeExito);
+  }
+
+  function mostrarError(err, fallback) {
+    const mensajeError = getErrorMessage(err, fallback);
+    setError(mensajeError);
+    toastError(mensajeError);
+  }
+
   async function cargarRegistros() {
     setCargando(true);
     setError("");
@@ -46,7 +59,7 @@ export default function TestimoniosPage() {
       const respuesta = await obtenerTestimonios();
       setRegistros(respuesta?.data || []);
     } catch (err) {
-      setError(err.message || "No se pudieron cargar los testimonios.");
+      mostrarError(err, "No se pudieron cargar los testimonios.");
     } finally {
       setCargando(false);
     }
@@ -112,9 +125,9 @@ export default function TestimoniosPage() {
         ...prev,
         url_foto: respuesta?.data?.url || "",
       }));
-      setMensaje("Foto subida correctamente.");
+      mostrarExito("Foto subida correctamente.");
     } catch (err) {
-      setError(err.message || "No se pudo subir la foto.");
+      mostrarError(err, "No se pudo subir la foto.");
     } finally {
       setSubiendo(false);
       event.target.value = "";
@@ -130,16 +143,16 @@ export default function TestimoniosPage() {
     try {
       if (editando) {
         await actualizarTestimonio(editando.id_testimonio, formulario);
-        setMensaje("Testimonio actualizado correctamente.");
+        mostrarExito("Testimonio actualizado correctamente.");
       } else {
         await crearTestimonio(formulario);
-        setMensaje("Testimonio creado correctamente.");
+        mostrarExito("Testimonio creado correctamente.");
       }
 
       limpiarFormulario();
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el testimonio.");
+      mostrarError(err, "No se pudo guardar el testimonio.");
     } finally {
       setGuardando(false);
     }
@@ -158,10 +171,10 @@ export default function TestimoniosPage() {
 
     try {
       await eliminarTestimonio(registro.id_testimonio);
-      setMensaje("Testimonio eliminado correctamente.");
+      mostrarExito("Testimonio eliminado correctamente.");
       await cargarRegistros();
     } catch (err) {
-      setError(err.message || "No se pudo eliminar el testimonio.");
+      mostrarError(err, "No se pudo eliminar el testimonio.");
     } finally {
       setEliminandoId(null);
     }
